@@ -35,6 +35,20 @@ export const authService = {
     return { success: false, message: res.data?.message || res.error || 'Registration failed. Please try again.' };
   },
 
+  /**
+   * Register as Client — simple registration, admin approves.
+   */
+  async signupClient({ name, email, phone, address, password, confirm_password }) {
+    const res = await apiClient('/auth/register-client', {
+      method: 'POST',
+      data: { name, email: email || undefined, phone, address, password, confirm_password }
+    });
+    if (res.success) {
+      return { success: true, data: res.data?.data || res.data };
+    }
+    return { success: false, message: res.data?.message || res.error || 'Registration failed. Please try again.' };
+  },
+
   logout() {
     localStorage.removeItem('devojas_token');
     localStorage.removeItem('devojas_user');
@@ -49,3 +63,4 @@ export const authService = {
     return !!localStorage.getItem('devojas_token');
   }
 };
+

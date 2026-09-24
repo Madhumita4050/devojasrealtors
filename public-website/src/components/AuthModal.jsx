@@ -21,6 +21,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
   const [loginForm, setLoginForm] = useState({ identifier: '', password: '' });
 
   // Signup form state
+  const [signupRole, setSignupRole] = useState('associate'); // 'associate' | 'client'
   const [signupForm, setSignupForm] = useState({
     name: '', phone: '', email: '',
     pan_number: '', aadhar_number: '',
@@ -47,18 +48,22 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
     try {
       const result = await authService.login(loginForm.identifier, loginForm.password);
       if (result.success) {
-        if (result.user.role !== 'client') {
+        const role = result.user?.role;
+        if (role === 'client') {
+          onAuthSuccess && onAuthSuccess(result.user);
+          resetAndClose();
+        } else {
+          // Associate, Admin, Accounts → redirect to admin panel with SSO
           const adminPanelUrl = import.meta.env.VITE_ADMIN_PANEL_URL || 'http://localhost:5173';
           window.location.href = `${adminPanelUrl}/?ssoToken=${result.token}`;
-          return;
         }
-        onAuthSuccess && onAuthSuccess(result.user);
-        resetAndClose();
       } else {
-        setError(result.message);
+        setError(result.message || 'Login failed.');
       }
-    } catch {
-      setError('Something went wrong. Please try again.');
+    } catch (err) {
+      // Properly extract backend error message
+      const msg = err?.response?.data?.message || err?.message || 'Login failed. Please check your credentials.';
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -81,28 +86,35 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
       setError('Please enter a valid 10-digit phone number.');
       return;
     }
-    if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/i.test(signupForm.pan_number)) {
-      setError('Please enter a valid PAN number (e.g. ABCDE1234F).');
-      return;
-    }
-    if (!/^\d{12}$/.test(signupForm.aadhar_number)) {
-      setError('Please enter a valid 12-digit Aadhar number.');
-      return;
+
+    if (signupRole === 'associate') {
+      if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/i.test(signupForm.pan_number)) {
+        setError('Please enter a valid PAN number (e.g. ABCDE1234F).');
+        return;
+      }
+      if (!/^\d{12}$/.test(signupForm.aadhar_number)) {
+        setError('Please enter a valid 12-digit Aadhar number.');
+        return;
+      }
     }
 
     setLoading(true);
     try {
-      const result = await authService.signupAssociate(signupForm);
+      let result;
+      if (signupRole === 'associate') {
+        result = await authService.signupAssociate(signupForm);
+      } else {
+        result = await authService.signupClient(signupForm);
+      }
       if (result.success) {
-        // ALWAYS show the success screen so the user can see their Associate ID.
-        // We will not auto-login and close the modal.
         setSuccessData(result.data);
         setMode('success');
       } else {
         setError(result.message);
       }
-    } catch {
-      setError('Something went wrong. Please try again.');
+    } catch (err) {
+      const msg = err?.response?.data?.message || err?.message || 'Something went wrong. Please try again.';
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -245,9 +257,31 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
                   <ArrowLeft className="h-4 w-4" />
                 </button>
                 <div>
-                  <h3 className="text-xl font-bold text-brand-navy font-serif">Register as Associate</h3>
-                  <p className="text-xs text-gray-500">Fill all details — admin will review and approve.</p>
+                  <h3 className="text-xl font-bold text-brand-navy font-serif">Create an Account</h3>
+                  <p className="text-xs text-gray-500">Admin will review and approve your account.</p>
                 </div>
+              </div>
+
+              {/* Role Selector */}
+              <div className="flex gap-2 mb-5 p-1 bg-gray-100 rounded-xl">
+                <button
+                  type="button"
+                  onClick={() => { setSignupRole('associate'); setError(''); }}
+                  className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
+                    signupRole === 'associate' ? 'bg-brand-navy text-white shadow' : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  🤝 Associate
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setSignupRole('client'); setError(''); }}
+                  className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
+                    signupRole === 'client' ? 'bg-brand-navy text-white shadow' : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  👤 Client
+                </button>
               </div>
 
               {error && <div className="bg-rose-50 text-rose-600 text-xs px-3 py-2 rounded-lg mb-4 flex items-start gap-2"><AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />{error}</div>}
@@ -287,27 +321,29 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
                   </div>
                 </div>
 
-                {/* PAN + Aadhar */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className={labelClass}>PAN Number *</label>
-                    <div className="relative">
-                      <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <input type="text" required value={signupForm.pan_number}
-                        onChange={(e) => setSignupForm({ ...signupForm, pan_number: e.target.value.toUpperCase() })}
-                        placeholder="ABCDE1234F" maxLength={10} className={inputClass} />
+                {/* PAN + Aadhar — Associate only */}
+                {signupRole === 'associate' && (
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className={labelClass}>PAN Number *</label>
+                      <div className="relative">
+                        <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <input type="text" required value={signupForm.pan_number}
+                          onChange={(e) => setSignupForm({ ...signupForm, pan_number: e.target.value.toUpperCase() })}
+                          placeholder="ABCDE1234F" maxLength={10} className={inputClass} />
+                      </div>
+                    </div>
+                    <div>
+                      <label className={labelClass}>Aadhar Number *</label>
+                      <div className="relative">
+                        <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <input type="text" required value={signupForm.aadhar_number}
+                          onChange={(e) => setSignupForm({ ...signupForm, aadhar_number: e.target.value.replace(/\D/g, '') })}
+                          placeholder="12-digit number" maxLength={12} className={inputClass} />
+                      </div>
                     </div>
                   </div>
-                  <div>
-                    <label className={labelClass}>Aadhar Number *</label>
-                    <div className="relative">
-                      <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <input type="text" required value={signupForm.aadhar_number}
-                        onChange={(e) => setSignupForm({ ...signupForm, aadhar_number: e.target.value.replace(/\D/g, '') })}
-                        placeholder="12-digit number" maxLength={12} className={inputClass} />
-                    </div>
-                  </div>
-                </div>
+                )}
 
                 {/* Address */}
                 <div>
@@ -323,17 +359,19 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
                   </div>
                 </div>
 
-                {/* Sponsor Code */}
-                <div>
-                  <label className={labelClass}>Sponsored By (Referral Code / Associate ID)</label>
-                  <div className="relative">
-                    <IdCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <input type="text" value={signupForm.sponsor_code}
-                      onChange={(e) => setSignupForm({ ...signupForm, sponsor_code: e.target.value })}
-                      placeholder="e.g. DEV-0001 or AMITSH123 (optional)" className={inputClass} />
+                {/* Sponsor Code — Associate only */}
+                {signupRole === 'associate' && (
+                  <div>
+                    <label className={labelClass}>Sponsored By (Referral Code / Associate ID)</label>
+                    <div className="relative">
+                      <IdCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <input type="text" value={signupForm.sponsor_code}
+                        onChange={(e) => setSignupForm({ ...signupForm, sponsor_code: e.target.value })}
+                        placeholder="e.g. DEV-0001 or AMITSH123 (optional)" className={inputClass} />
+                    </div>
+                    <p className="text-[10px] text-gray-400 mt-1">Ask your sponsor for their Associate ID or Referral Code</p>
                   </div>
-                  <p className="text-[10px] text-gray-400 mt-1">Ask your sponsor for their Associate ID or Referral Code</p>
-                </div>
+                )}
 
                 {/* Password */}
                 <div>

@@ -232,7 +232,8 @@ const login = async (req, res, next) => {
         role: user.role,
         referral_code: user.referral_code,
         last_login_at: user.last_login_at,
-        kyc_status: user.kyc_status
+        kyc_status: user.kyc_status,
+        profile_image: user.profile_image
       }
     });
   } catch (error) {
@@ -282,4 +283,63 @@ const changePassword = async (req, res, next) => {
   } catch (error) { next(error); }
 };
 
-module.exports = { register, registerAssociate, login, getMe, updateProfile, changePassword };
+// @desc Public Client Registration
+// @route POST /api/auth/register-client
+const registerClient = async (req, res, next) => {
+  try {
+    const { name, email, phone, password, confirm_password, address } = req.body;
+
+    if (!name || !phone || !password) {
+      return res.status(400).json({ success: false, message: 'Name, phone and password are required' });
+    }
+    if (password !== confirm_password) {
+      return res.status(400).json({ success: false, message: 'Password and Confirm Password do not match' });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
+    }
+
+    const existingPhone = await User.findOne({ where: { phone } });
+    if (existingPhone) {
+      return res.status(400).json({ success: false, message: 'Phone number already registered' });
+    }
+    if (email) {
+      const existingEmail = await User.findOne({ where: { email } });
+      if (existingEmail) {
+        return res.status(400).json({ success: false, message: 'Email already registered' });
+      }
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const referral_code = generateReferralCode(name);
+
+    const user = await User.create({
+      name,
+      email: email || null,
+      phone,
+      address: address || null,
+      password: hashedPassword,
+      plain_password: password,
+      role: 'client',
+      referral_code,
+      kyc_status: 'not_submitted',
+      status: 'pending_approval'
+    });
+
+    const login_id = generateLoginId(user.id);
+    await user.update({ login_id });
+    await Wallet.create({ user_id: user.id, balance: 0 });
+
+    res.status(201).json({
+      success: true,
+      message: 'Registration successful! Admin will review and approve your account.',
+      data: {
+        login_id: user.login_id,
+        name: user.name,
+        referral_code: user.referral_code
+      }
+    });
+  } catch (error) { next(error); }
+};
+
+module.exports = { register, registerAssociate, registerClient, login, getMe, updateProfile, changePassword };
