@@ -80,28 +80,20 @@ const Sidebar = ({ collapsed }) => {
 
       {/* Logo */}
       <div style={{
-        display: "flex", alignItems: "center", gap: "12px",
+        display: "flex", alignItems: "center",
         padding: collapsed ? "16px 12px" : "16px 20px",
-        justifyContent: collapsed ? "center" : "flex-start",
+        justifyContent: "center",
         borderBottom: "1px solid rgba(212,175,55,0.2)",
         flexShrink: 0
       }}>
         <div style={{ position: "relative", flexShrink: 0 }}>
-          <div style={{ position: "absolute", inset: 0, borderRadius: "50%", filter: "blur(12px)", background: "#D4AF37", opacity: 0.4 }} />
           <img
             src="/logo.png"
             alt="Devojas"
-            style={{ position: "relative", width: "46px", height: "46px", borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(212,175,55,0.6)" }}
+            style={{ position: "relative", width: "120px", height: "auto", maxHeight: "68px", objectFit: "contain" }}
             onError={(e) => { e.target.style.display = "none"; }}
           />
         </div>
-        {!collapsed && (
-          <div style={{ overflow: "hidden", lineHeight: 1.2 }}>
-            <p style={{ fontWeight: 900, color: "white", fontSize: "13px", letterSpacing: "0.15em", textTransform: "uppercase", fontFamily: "Georgia, serif", margin: 0 }}>DEVOJAS</p>
-            <p style={{ color: "#D4AF37", fontSize: "9px", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", margin: 0 }}>REALTORS Pvt. Ltd.</p>
-            <p style={{ color: "rgba(148,163,184,0.65)", fontSize: "8.5px", fontWeight: 600, margin: "2px 0 0 0" }}>Admin Panel</p>
-          </div>
-        )}
       </div>
 
       {/* User chip */}
@@ -121,7 +113,7 @@ const Sidebar = ({ collapsed }) => {
           </div>
           <div style={{ overflow: "hidden", flex: 1, minWidth: 0 }}>
             <p style={{ color: "white", fontSize: "13px", fontWeight: 700, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.name}</p>
-            <p style={{ color: "#D4AF37", fontSize: "9px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", margin: 0 }}>{user.role} · {user.login_id || "DEV-0001"}</p>
+            <p style={{ color: "#D4AF37", fontSize: "9px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", margin: 0 }}>{user.role} Â· {user.login_id || "DEV-0001"}</p>
           </div>
           {pendingCount > 0 && (
             <div style={{ display: "flex", alignItems: "center", gap: "4px", background: "rgba(239,68,68,0.2)", color: "#f87171", padding: "3px 8px", borderRadius: "20px", fontSize: "10px", fontWeight: 900, flexShrink: 0 }}>

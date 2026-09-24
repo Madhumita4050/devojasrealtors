@@ -131,8 +131,12 @@ const Navbar = ({ onToggleSidebar }) => {
             onClick={() => { setShowProfile(!showProfile); setShowNotifs(false); }}
             className="flex items-center gap-2.5 pl-2 pr-3 py-1.5 hover:bg-slate-100 rounded-xl transition-colors duration-150"
           >
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-sky-500 text-white flex items-center justify-center text-sm font-bold shadow-sm">
-              {user?.name?.charAt(0).toUpperCase() || 'A'}
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-sky-500 text-white flex items-center justify-center text-sm font-bold shadow-sm overflow-hidden border border-slate-200">
+              {user?.profile_image ? (
+                <img src={user.profile_image} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                user?.name?.charAt(0).toUpperCase() || 'A'
+              )}
             </div>
             <div className="hidden sm:block text-left">
               <p className="text-sm font-semibold text-slate-800 leading-tight">{user?.name || 'Admin'}</p>

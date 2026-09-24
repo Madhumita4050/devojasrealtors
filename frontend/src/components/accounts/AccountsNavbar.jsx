@@ -73,8 +73,12 @@ const AccountsNavbar = ({ onToggleSidebar }) => {
 
         <div className="relative" ref={profileRef}>
           <button onClick={() => setShowProfile(!showProfile)} className="flex items-center gap-2 pl-2 pr-1 py-1 hover:bg-gray-100 rounded-lg">
-            <div className="w-8 h-8 rounded-full bg-gold text-white flex items-center justify-center text-sm font-semibold">
-              {user?.name?.charAt(0).toUpperCase() || 'F'}
+            <div className="w-8 h-8 rounded-full bg-gold text-white flex items-center justify-center text-sm font-semibold overflow-hidden border border-slate-200">
+              {user?.profile_image ? (
+                <img src={user.profile_image} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                user?.name?.charAt(0).toUpperCase() || 'F'
+              )}
             </div>
             <span className="hidden sm:block text-sm font-medium text-gray-700">{user?.name}</span>
             <ChevronDown size={16} className="text-gray-400" />

@@ -250,13 +250,14 @@ const getMe = async (req, res, next) => {
 // @route PUT /api/auth/profile
 const updateProfile = async (req, res, next) => {
   try {
-    const { name, phone, email } = req.body;
+    const { name, phone, email, profile_image } = req.body;
     const user = await User.findByPk(req.user.id);
     if (!user) return res.status(404).json({ success: false, message: 'User not found' });
     await user.update({
       name: name !== undefined ? name : user.name,
       phone: phone !== undefined ? phone : user.phone,
       email: email !== undefined ? email : user.email,
+      profile_image: profile_image !== undefined ? profile_image : user.profile_image,
     });
     const { password, ...userData } = user.toJSON();
     res.json({ success: true, message: 'Profile updated successfully', data: userData });

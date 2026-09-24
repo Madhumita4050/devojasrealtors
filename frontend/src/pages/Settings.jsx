@@ -29,6 +29,11 @@ const Settings = () => {
   const [uploadError, setUploadError] = useState('');
   const fileInputRef = useRef(null);
 
+  // Profile image upload state
+  const [profileImgUploading, setProfileImgUploading] = useState(false);
+  const [profileImgError, setProfileImgError] = useState('');
+  const profileImgRef = useRef(null);
+
   // Admin password state
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
@@ -92,6 +97,27 @@ const Settings = () => {
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const handleProfileImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setProfileImgError('');
+    setProfileImgUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await api.post('/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      await api.put('/auth/profile', { profile_image: res.data.url });
+      window.location.reload(); // Reload to update navbar context
+    } catch (err) {
+      setProfileImgError(err.response?.data?.message || 'Profile upload failed.');
+    } finally {
+      setProfileImgUploading(false);
+      if (profileImgRef.current) profileImgRef.current.value = '';
     }
   };
 
@@ -160,6 +186,33 @@ const Settings = () => {
           <div className="bg-slate-50 p-3.5 rounded-xl">
             <p className="text-xs text-slate-400 font-semibold uppercase">System Role</p>
             <p className="font-bold text-blue-700 text-base capitalize mt-0.5">{user?.role || 'Admin'}</p>
+          </div>
+        </div>
+        <div className="mt-5 pt-5 border-t border-slate-100 flex items-center gap-5">
+          <div className="w-16 h-16 rounded-full bg-slate-100 border-2 border-white shadow flex items-center justify-center overflow-hidden shrink-0">
+            {user?.profile_image ? (
+              <img src={user.profile_image} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-2xl font-bold text-slate-400">{user?.name?.charAt(0)?.toUpperCase()}</span>
+            )}
+          </div>
+          <div>
+            <input
+              ref={profileImgRef}
+              type="file"
+              accept="image/*"
+              onChange={handleProfileImageUpload}
+              className="hidden"
+              id="profile-img-upload"
+            />
+            <label
+              htmlFor="profile-img-upload"
+              className="btn-primary cursor-pointer text-xs py-1.5 px-3 inline-flex items-center gap-1.5 rounded-lg"
+            >
+              {profileImgUploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+              {profileImgUploading ? 'Uploading...' : 'Update Profile Picture'}
+            </label>
+            {profileImgError && <p className="text-xs text-red-500 mt-1">{profileImgError}</p>}
           </div>
         </div>
       </div>

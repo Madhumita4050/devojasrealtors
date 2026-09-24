@@ -82,6 +82,10 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: true
   },
+  profile_image: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
   status: {
     type: DataTypes.ENUM('active', 'blocked', 'pending_approval'),
     defaultValue: 'active'

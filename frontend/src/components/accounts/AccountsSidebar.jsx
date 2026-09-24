@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, CreditCard, Send, FileText, BarChart3, Wallet, Download, Headphones, LogOut, Building2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import api from '../../api/axios';
 
 const menuItems = [
   { title: 'Dashboard', icon: LayoutDashboard, path: '/accounts' },
@@ -20,24 +21,15 @@ const AccountsSidebar = ({ collapsed }) => {
   return (
     <aside className={`fixed top-0 left-0 h-screen bg-navy text-white flex flex-col z-40 transition-all duration-300 ${collapsed ? 'w-[72px]' : 'w-[280px]'}`}>
       {/* Logo */}
-      <div className={`flex items-center gap-3 border-b shrink-0 ${collapsed ? 'px-3 py-4 justify-center' : 'px-5 py-4'}`} style={{ borderColor: 'rgba(212,175,55,0.2)' }}>
-        <div className="relative shrink-0">
-          <div className="absolute inset-0 rounded-full blur-lg opacity-40" style={{ background: '#D4AF37' }} />
+      <div className={`flex items-center gap-3 border-b shrink-0 ${collapsed ? 'px-3 py-4 justify-center' : 'px-5 py-4'} justify-center`} style={{ borderColor: 'rgba(212,175,55,0.2)' }}>
+        <div className="relative shrink-0 flex items-center justify-center">
           <img
             src="/logo.png"
             alt="Devojas Realtors"
-            className="relative w-11 h-11 rounded-full object-cover ring-2"
-            style={{ ringColor: 'rgba(212,175,55,0.6)' }}
+            className="relative w-auto h-auto max-w-[120px] max-h-[68px] object-contain"
             onError={(e) => { e.target.style.display = 'none'; }}
           />
         </div>
-        {!collapsed && (
-          <div className="overflow-hidden leading-tight">
-            <p className="font-black text-white text-sm tracking-widest uppercase" style={{ fontFamily: 'serif' }}>DEVOJAS</p>
-            <p className="text-[10px] font-bold tracking-widest uppercase" style={{ color: '#D4AF37' }}>REALTORS Pvt. Ltd.</p>
-            <p className="text-[9px] mt-0.5 font-semibold" style={{ color: 'rgba(148,163,184,0.7)' }}>Accounts Panel</p>
-          </div>
-        )}
       </div>
 
       <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
