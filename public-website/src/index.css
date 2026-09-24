@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:wght@500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(215, 164, 59, 0.14), transparent 28rem),
+    radial-gradient(circle at 85% 18%, rgba(30, 91, 71, 0.12), transparent 30rem),
+    linear-gradient(180deg, #fffaf0 0%, #f7f1e4 46%, #ffffff 100%);
+  color: #17231d;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', sans-serif;
+}
+
+::selection {
+  background: #d7a43b;
+  color: #071812;
+}
+
+@layer base {
+  strong {
+    color: #12372a;
+    font-weight: 800;
+  }
+}
+
+@layer components {
+  .page-shell {
+    background:
+      linear-gradient(135deg, rgba(255, 250, 240, 0.98), rgba(246, 255, 247, 0.85)),
+      repeating-linear-gradient(90deg, rgba(18, 55, 42, 0.035) 0 1px, transparent 1px 72px);
+  }
+
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid rgba(18, 55, 42, 0.09);
+    box-shadow: 0 20px 65px rgba(40, 53, 38, 0.12);
+    backdrop-filter: blur(18px);
+  }
+
+  .section-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    border: 1px solid rgba(215, 164, 59, .35);
+    background: rgba(215, 164, 59, .14);
+    color: #12372a;
+    border-radius: 999px;
+    padding: .38rem .85rem;
+    font-size: .68rem;
+    font-weight: 900;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+
+  .page-hero {
+    position: relative;
+    overflow: hidden;
+    color: white;
+    background:
+      linear-gradient(135deg, rgba(7, 24, 18, .98), rgba(18, 55, 42, .94) 48%, rgba(76, 97, 45, .88)),
+      url('/assets/plot_site_wide.jpg') center/cover;
+  }
+
+  .page-hero::after {
+    content: "";
+    position: absolute;
+    inset: auto -12% -36% 46%;
+    height: 22rem;
+    border-radius: 999px;
+    background: rgba(215, 164, 59, .22);
+    filter: blur(60px);
+  }
+
+  .lift-card {
+    transform: translateY(0);
+    transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease;
+  }
+
+  .lift-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 28px 70px rgba(18, 55, 42, .16);
+    border-color: rgba(215, 164, 59, .42);
+  }
+}

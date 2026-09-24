@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #f8fafc;
+    color: #1e293b;
+    -webkit-font-smoothing: antialiased;
+    font-size: 15px;
+  }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: #f1f5f9; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+}
+
+@layer components {
+
+  /* ─── CARDS ─────────────────────────────────────────────────────────────── */
+  .card {
+    @apply bg-white border border-slate-200/90 rounded-2xl p-6 shadow-sm transition-all duration-200;
+  }
+  .card-hover {
+    @apply card hover:border-blue-300 hover:shadow-md hover:-translate-y-0.5;
+  }
+
+  /* ─── STAT CARD ──────────────────────────────────────────────────────────── */
+  .stat-card {
+    @apply card-hover relative overflow-hidden;
+  }
+  .stat-card::before {
+    content: '';
+    @apply absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-600 via-sky-400 to-blue-600;
+  }
+
+  /* ─── BUTTONS ────────────────────────────────────────────────────────────── */
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 text-sm sm:text-base inline-flex items-center justify-center gap-2;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+  }
+  .btn-gold, .btn-accent {
+    @apply bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white px-5 py-2.5 rounded-xl font-semibold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 text-sm sm:text-base inline-flex items-center justify-center gap-2;
+    box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35);
+  }
+  .btn-secondary {
+    @apply bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl font-medium transition-all duration-200 text-sm sm:text-base inline-flex items-center justify-center gap-2;
+  }
+  .btn-danger {
+    @apply bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200;
+  }
+  .btn-success {
+    @apply bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200;
+  }
+  .btn-ghost {
+    @apply border border-slate-200 text-slate-700 hover:border-blue-400 hover:text-blue-600 px-4 py-2.5 rounded-xl font-semibold transition-all duration-200 text-sm sm:text-base bg-white;
+  }
+
+  /* ─── INPUTS ─────────────────────────────────────────────────────────────── */
+  .input-field {
+    @apply w-full border border-slate-300 rounded-xl px-4 py-2.5 text-base bg-white text-slate-800 placeholder-slate-400
+           focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-600 transition-all duration-200 shadow-sm;
+  }
+  select.input-field {
+    @apply appearance-none bg-no-repeat pr-10;
+  }
+
+  /* ─── BADGES ─────────────────────────────────────────────────────────────── */
+  .badge {
+    @apply px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1;
+  }
+  .badge-active { @apply badge bg-emerald-50 text-emerald-700 border border-emerald-200; }
+  .badge-pending { @apply badge bg-amber-50 text-amber-700 border border-amber-200; }
+  .badge-blocked { @apply badge bg-red-50 text-red-700 border border-red-200; }
+  .badge-approved { @apply badge bg-blue-50 text-blue-700 border border-blue-200; }
+
+  /* ─── TABLE ──────────────────────────────────────────────────────────────── */
+  .data-table { @apply w-full text-base; }
+  .data-table thead tr { @apply border-b border-slate-200 bg-slate-50/80; }
+  .data-table thead th { @apply text-left px-5 py-3.5 text-xs sm:text-sm font-bold text-slate-600 uppercase tracking-wider; }
+  .data-table tbody tr {
+    @apply border-b border-slate-100 transition-colors duration-150 hover:bg-blue-50/40;
+  }
+  .data-table tbody td { @apply px-5 py-4 text-slate-700; }
+
+  /* ─── PAGE HEADER ────────────────────────────────────────────────────────── */
+  .page-header {
+    @apply flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6;
+  }
+  .page-title { @apply text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight; }
+  .page-subtitle { @apply text-slate-500 text-sm sm:text-base mt-1; }
+
+  /* ─── GLASS CARD ─────────────────────────────────────────────────────────── */
+  .glass-card {
+    @apply bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-sm;
+  }
+
+  /* ─── SIDEBAR LINK ───────────────────────────────────────────────────────── */
+  .sidebar-link {
+    @apply w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 text-slate-300 hover:text-white hover:bg-white/10;
+  }
+  .sidebar-link-active {
+    @apply sidebar-link text-white bg-gradient-to-r from-blue-600 to-sky-500 font-semibold shadow-md shadow-blue-600/30;
+  }
+
+  /* ─── NETWORK TREE ───────────────────────────────────────────────────────── */
+  .tree-node {
+    @apply relative;
+  }
+  .tree-node-card {
+    @apply flex items-center gap-3 p-4 rounded-xl border border-slate-200 bg-white hover:border-blue-400 hover:shadow-md transition-all duration-200 cursor-pointer;
+  }
+  .tree-connector {
+    @apply absolute left-5 top-0 bottom-0 w-[2px] bg-gradient-to-b from-blue-500/50 to-transparent;
+  }
+}

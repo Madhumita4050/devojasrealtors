@@ -1,0 +1,81 @@
+/* Horizontal Org-Tree Styles for Network / Referral Hierarchy */
+.org-tree-wrapper {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.org-tree-children {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  padding-top: 24px;
+}
+
+/* Vertical line from parent down to the horizontal bar */
+.org-tree-children::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 24px;
+  background: #3b82f6;
+  opacity: 0.6;
+  transform: translateX(-50%);
+}
+
+.org-tree-node-col {
+  position: relative;
+  padding: 24px 12px 0 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Vertical line dropping into child */
+.org-tree-node-col::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 24px;
+  background: #3b82f6;
+  opacity: 0.6;
+  transform: translateX(-50%);
+}
+
+/* Horizontal connecting line across siblings */
+.org-tree-node-col::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  height: 2px;
+  background: #3b82f6;
+  opacity: 0.6;
+}
+
+/* Single child has no horizontal line */
+.org-tree-node-col:only-child::after {
+  display: none;
+}
+
+/* First sibling starts at center and extends right */
+.org-tree-node-col:first-child:not(:only-child)::after {
+  left: 50%;
+  right: 0;
+}
+
+/* Last sibling starts at left and extends to center */
+.org-tree-node-col:last-child:not(:only-child)::after {
+  left: 0;
+  right: 50%;
+}
+
+/* Middle siblings span the whole column width */
+.org-tree-node-col:not(:first-child):not(:last-child)::after {
+  left: 0;
+  right: 0;
+}
