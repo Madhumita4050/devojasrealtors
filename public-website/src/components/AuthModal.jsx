@@ -345,6 +345,17 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
                   </div>
                 )}
 
+                {/* Commission Percentage - Read Only */}
+                {signupRole === 'associate' && (
+                  <div>
+                    <label className={labelClass}>Commission Percentage (Auto-filled)</label>
+                    <div className="relative">
+                      <input type="text" readOnly value="5%"
+                        className={`${inputClass} bg-gray-100 cursor-not-allowed`} />
+                    </div>
+                  </div>
+                )}
+
                 {/* Address */}
                 <div>
                   <label className={labelClass}>Full Address *</label>

@@ -47,7 +47,8 @@ export default function Navbar() {
     { name: 'Home', path: '/' },
     { name: 'About Us', path: '/about' },
     { name: 'Projects', path: '/projects' },
-    { name: 'Location Highlights', path: '/location' },
+    { name: 'Plot Inventory', path: '/plot-inventory' },
+    { name: 'Location', path: '/location' },
     { name: 'Gallery', path: '/gallery' },
     { name: 'Contact Us', path: '/contact' },
   ];
@@ -86,8 +87,8 @@ export default function Navbar() {
     <>
       <nav className={`fixed w-full z-50 transition-all duration-500 ${
         scrolled 
-          ? 'bg-[#fffaf0]/95 shadow-glow py-1.5 border-b border-brand-navy/10' 
-          : 'bg-[#fffaf0]/82 backdrop-blur-xl py-3.5 border-b border-brand-gold/25'
+          ? 'bg-white/98 backdrop-blur-md shadow-md py-2 border-b border-gray-100' 
+          : 'bg-white/95 backdrop-blur-md py-3.5 border-b border-gray-200/50'
       }`}>
         
         {/* Decorative Golden Gradient Bottom Border */}
@@ -98,16 +99,11 @@ export default function Navbar() {
             
             {/* Logo & Brand Identity (Aligned Left) */}
             <Link to="/" className="flex items-center space-x-3 group shrink-0">
-              <div className="relative">
-                <div className="absolute inset-0 bg-brand-gold rounded-full blur-md opacity-35 group-hover:opacity-70 scale-110 transition-opacity duration-300" />
-                <div className="relative p-1.5 bg-white rounded-full ring-2 ring-brand-gold/70 shadow-md transition-all duration-300 group-hover:scale-105">
-                  <img
-                    src="/assets/logo.png"
-                    alt="Devojas Realtors Logo"
-                    className="h-11 w-11 md:h-14 md:w-14 object-contain rounded-full"
-                  />
-                </div>
-              </div>
+              <img
+                src="/assets/logo.png"
+                alt="Devojas Realtors Logo"
+                className="h-12 w-auto md:h-16 object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-105"
+              />
               <div className="flex flex-col text-left">
                 <span className="font-extrabold text-brand-navy tracking-wider text-sm md:text-base lg:text-lg font-serif leading-none">
                   DEVOJAS REALTORS
@@ -125,10 +121,10 @@ export default function Navbar() {
                   key={link.name}
                   to={link.path}
                   className={({ isActive }) =>
-                    `px-3 py-2 rounded-full text-xs xl:text-sm font-extrabold tracking-wide transition-all duration-300 ${
+                    `px-4 py-2 rounded-full text-xs xl:text-sm font-semibold tracking-wide transition-all duration-300 ${
                       isActive 
-                        ? 'text-white bg-brand-navy border border-brand-navy shadow-md' 
-                        : 'text-brand-navy hover:text-brand-navy hover:bg-brand-gold/15 border border-transparent'
+                        ? 'text-white bg-brand-navy shadow-md' 
+                        : 'text-brand-navy/80 hover:text-brand-gold hover:bg-brand-navy/5 border border-transparent'
                     }`
                   }
                 >
@@ -191,7 +187,7 @@ export default function Navbar() {
 
         {/* Mobile Drawer Slide-In Panel (Light Theme matching Navbar) */}
         <div 
-          className={`lg:hidden fixed inset-y-0 right-0 z-50 w-80 bg-[#fffaf0] shadow-2xl transform transition-transform duration-500 ease-in-out border-l border-brand-navy/10 ${
+          className={`lg:hidden fixed inset-y-0 right-0 z-50 w-[85vw] max-w-sm bg-white shadow-2xl transform transition-transform duration-500 ease-in-out border-l border-brand-navy/5 ${
             isOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
@@ -200,10 +196,7 @@ export default function Navbar() {
 
           <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-brand-navy/10 bg-white/50">
             <div className="flex items-center space-x-2">
-              <div className="relative">
-                <div className="absolute inset-0 bg-brand-gold rounded-full blur opacity-40 scale-110" />
-                <img src="/assets/logo.png" alt="Logo" className="relative h-10 w-10 object-contain rounded-full ring-2 ring-brand-gold bg-white p-0.5" />
-              </div>
+              <img src="/assets/logo.png" alt="Logo" className="h-10 w-auto object-contain" />
               <div className="text-left">
                 <span className="text-brand-navy font-extrabold text-xs tracking-wider font-serif block">DEVOJAS REALTORS</span>
                 <span className="text-[8px] text-brand-gold font-bold uppercase tracking-widest">Varanasi</span>
@@ -217,7 +210,7 @@ export default function Navbar() {
             </button>
           </div>
 
-          <div className="px-5 py-6 space-y-2">
+          <div className="px-5 py-6 space-y-2 overflow-y-auto h-[calc(100vh-80px)] pb-12">
             {navLinks.map((link) => (
               <NavLink
                 key={link.name}

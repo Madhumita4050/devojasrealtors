@@ -92,6 +92,9 @@ const createUser = async (req, res, next) => {
       referral_commission_percent: isAssociate
         ? (referral_commission_percent || referral_commission_percent === 0 ? referral_commission_percent : 5)
         : (referral_commission_percent || null),
+      commission_percent: isAssociate
+        ? (referral_commission_percent || referral_commission_percent === 0 ? referral_commission_percent : 5)
+        : (referral_commission_percent || null),
       pan_number: pan_number || null,
       aadhar_number: aadhar_number || null,
       referral_code,
@@ -141,7 +144,8 @@ const updateUser = async (req, res, next) => {
       referred_by: referred_by !== undefined ? (referred_by || null) : user.referred_by,
       pan_number: pan_number !== undefined ? pan_number : user.pan_number,
       aadhar_number: aadhar_number !== undefined ? aadhar_number : user.aadhar_number,
-      referral_commission_percent: referral_commission_percent !== undefined ? referral_commission_percent : user.referral_commission_percent
+      referral_commission_percent: referral_commission_percent !== undefined ? referral_commission_percent : user.referral_commission_percent,
+      commission_percent: referral_commission_percent !== undefined ? referral_commission_percent : user.commission_percent
     });
 
     const { password, ...userData } = user.toJSON();
@@ -157,6 +161,11 @@ const deleteUser = async (req, res, next) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    
+    // Delete associated records to prevent foreign key constraint errors
+    await WalletTransaction.destroy({ where: { user_id: user.id } });
+    await Wallet.destroy({ where: { user_id: user.id } });
+    
     await user.destroy();
     res.json({ success: true, message: 'User deleted successfully' });
   } catch (error) {

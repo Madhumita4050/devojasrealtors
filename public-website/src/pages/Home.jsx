@@ -13,21 +13,39 @@ export default function Home() {
 
   const testimonials = [
     {
-      name: "Sarah Jenkins",
+      name: "Priya Sharma",
       role: "Plot Owner, Block B",
       review: "Devojas Realtors showed me the registry papers and helped mutate my khatauni within 3 weeks. Excellent road access!",
       stars: 5
     },
     {
-      name: "John Miller",
+      name: "Rajesh Kumar",
       role: "Investment Buyer, Block A",
-      review: "Perfect location for high return, just 1.5 KM from Markandey Mahadev temple. Transparent process throughout.",
+      review: "Perfect location for high return, just 3.5 KM from Markandey Mahadev temple. Transparent process throughout.",
       stars: 5
     },
     {
-      name: "David Watson",
+      name: "Amit Patel",
       role: "NRI Plot Owner, Block C",
       review: "Hassle-free registry process. The team was transparent and arranged multiple free site visits for my family.",
+      stars: 5
+    },
+    {
+      name: "Vikram Singh",
+      role: "Plot Owner, Phase 1",
+      review: "Excellent infrastructure. The 40ft road is built exactly as promised on the layout map.",
+      stars: 5
+    },
+    {
+      name: "Sunita Devi",
+      role: "Residential Buyer",
+      review: "Safe and secure gated society. Very happy with the immediate registry process.",
+      stars: 5
+    },
+    {
+      name: "Ramesh Tiwari",
+      role: "Investment Buyer",
+      review: "Best plotting project in Varanasi. The return on investment here is incredible.",
       stars: 5
     }
   ];
@@ -63,7 +81,7 @@ export default function Home() {
         <div className="glass-panel rounded-[2rem] p-5 sm:p-7 grid grid-cols-2 lg:grid-cols-4 gap-4 animate-fadeUp">
           {[
             ['100%', 'Verified Land'],
-            ['20-40 Ft', 'Wide Roads'],
+            ['25-40 Ft', 'Wide Roads'],
             ['0', 'Brokerage'],
             ['Daily', 'Site Visits'],
           ].map(([value, label]) => (
@@ -95,9 +113,8 @@ export default function Home() {
             <h2 className="font-display text-3xl sm:text-5xl font-black leading-tight text-brand-navy">
               Varanasi's Leading Residential Plotting Specialist
             </h2>
-            <p className="text-base leading-8 text-slate-600">
-              Devojas Realtors Pvt. Ltd. delivers safe, verified, and infrastructure-rich residential plots
-              that secure your family's future and deliver high returns on investment.
+            <p className="text-base sm:text-lg leading-relaxed text-slate-600 max-w-lg">
+              Delivering safe, verified, and high-return residential plots to secure your future.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="lift-card rounded-2xl border border-brand-navy/10 bg-white/80 p-5">
@@ -128,8 +145,8 @@ export default function Home() {
               <h2 className="mt-4 font-display text-3xl sm:text-5xl font-black text-brand-navy">
                 Our Featured Residential Layout
               </h2>
-              <p className="mt-4 text-sm leading-7 text-slate-600">
-                Explore Devojas City, offering ready-to-construct plots with excellent road connectivity.
+              <p className="mt-3 text-sm sm:text-base leading-relaxed text-slate-600">
+                Premium ready-to-construct plots with multi-lane connectivity.
               </p>
             </div>
             <div className="rounded-2xl bg-brand-gold/15 border border-brand-gold/30 px-5 py-4 text-left">
@@ -183,26 +200,31 @@ export default function Home() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {testimonials.map((t, idx) => (
-            <div key={idx} className="lift-card rounded-[1.5rem] border border-brand-navy/10 bg-white/85 p-6 text-left shadow-lift">
-              <div className="flex gap-1">
-                {[...Array(t.stars)].map((_, i) => (
-                  <Star key={i} className="h-4 w-4 text-brand-gold fill-current" />
-                ))}
-              </div>
-              <p className="mt-5 text-sm leading-7 text-slate-600 italic">"{t.review}"</p>
-              <div className="mt-6 pt-5 border-t border-brand-navy/10 flex items-center gap-3">
-                <div className="h-11 w-11 rounded-2xl bg-brand-navy text-brand-gold flex items-center justify-center font-black text-sm uppercase">
-                  {t.name.charAt(0)}
+        <div className="overflow-hidden relative w-full pb-10">
+          <div className="flex w-max animate-marquee space-x-6 hover:[animation-play-state:paused]">
+            {[...testimonials, ...testimonials].map((t, idx) => (
+              <div key={idx} className="w-[320px] sm:w-[380px] shrink-0 rounded-[1.5rem] border border-brand-navy/10 bg-white p-6 sm:p-8 text-left shadow-xl hover:-translate-y-1 transition-transform">
+                <div className="flex gap-1">
+                  {[...Array(t.stars)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 sm:h-5 sm:w-5 text-brand-gold fill-current" />
+                  ))}
                 </div>
-                <div>
-                  <h4 className="font-bold text-sm text-brand-navy leading-none">{t.name}</h4>
-                  <span className="text-[11px] text-slate-500 block mt-1 font-semibold">{t.role}</span>
+                <p className="mt-5 text-sm sm:text-base leading-relaxed text-slate-600 italic">"{t.review}"</p>
+                <div className="mt-6 pt-5 border-t border-brand-navy/10 flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-brand-navy to-brand-navyLight text-brand-gold flex items-center justify-center font-black text-lg uppercase shadow-md">
+                    {t.name.charAt(0)}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-base text-brand-navy leading-none">{t.name}</h4>
+                    <span className="text-xs text-slate-500 block mt-1.5 font-semibold uppercase tracking-wider">{t.role}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+          {/* Gradient Masks for smooth scroll edge fading */}
+          <div className="absolute inset-y-0 left-0 w-12 sm:w-24 bg-gradient-to-r from-[#FAFAFA] to-transparent pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-12 sm:w-24 bg-gradient-to-l from-[#FAFAFA] to-transparent pointer-events-none" />
         </div>
       </section>
 
@@ -214,9 +236,8 @@ export default function Home() {
               <h2 className="font-display text-3xl sm:text-5xl font-black tracking-tight">
                 Secure Your Residential Plot in Devojas City Today
               </h2>
-              <p className="text-sm leading-7 text-white/75">
-                Fill out the enquiry form to book a site visit. Our advisors will walk you through the layout
-                plans and registry mutation papers.
+              <p className="text-sm sm:text-base leading-relaxed text-white/80 max-w-md">
+                Book a free site visit today. Fast, transparent, and seamless registry process.
               </p>
 
               <div className="grid sm:grid-cols-3 gap-3 pt-2">

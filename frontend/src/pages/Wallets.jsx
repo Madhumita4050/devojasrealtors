@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Check, X } from 'lucide-react';
+import { Check, X, Plus } from 'lucide-react';
 import api from '../api/axios';
+import Modal from '../components/Modal';
 
 const Wallets = () => {
   const [wallets, setWallets] = useState([]);
   const [withdrawals, setWithdrawals] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  const [topUpModal, setTopUpModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [topUpForm, setTopUpForm] = useState({ amount: '', description: '' });
 
   const fetchData = async () => {
     setLoading(true);
@@ -28,6 +33,18 @@ const Wallets = () => {
   const handleWithdrawal = async (id, action) => {
     await api.put(`/wallets/withdrawals/${id}`, { action });
     fetchData();
+  };
+
+  const handleTopUpSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await api.post(`/wallets/${selectedUser.id}/add-funds`, topUpForm);
+      setTopUpModal(false);
+      setTopUpForm({ amount: '', description: '' });
+      fetchData();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Error adding funds');
+    }
   };
 
   return (
@@ -73,6 +90,7 @@ const Wallets = () => {
               <th className="text-left px-4 py-3">User</th>
               <th className="text-left px-4 py-3">Role</th>
               <th className="text-left px-4 py-3">Balance</th>
+              <th className="text-right px-4 py-3">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -86,12 +104,34 @@ const Wallets = () => {
                   <td className="px-4 py-3 font-medium text-gray-800">{w.user?.name}</td>
                   <td className="px-4 py-3 capitalize text-gray-500">{w.user?.role}</td>
                   <td className="px-4 py-3 font-semibold text-navy">₹{Number(w.balance).toLocaleString('en-IN')}</td>
+                  <td className="px-4 py-3 text-right">
+                    <button 
+                      onClick={() => { setSelectedUser(w.user); setTopUpModal(true); }}
+                      className="px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-lg text-xs font-bold hover:bg-emerald-100 flex items-center gap-1 ml-auto"
+                    >
+                      <Plus size={14} /> Add Funds
+                    </button>
+                  </td>
                 </tr>
               ))
             )}
           </tbody>
         </table>
       </div>
+
+      <Modal title={`Add Funds to ${selectedUser?.name}`} isOpen={topUpModal} onClose={() => setTopUpModal(false)}>
+        <form onSubmit={handleTopUpSubmit} className="space-y-4">
+          <div>
+            <label className="text-sm font-medium text-gray-700 mb-1 block">Amount (₹)</label>
+            <input required type="number" min="1" value={topUpForm.amount} onChange={(e) => setTopUpForm({ ...topUpForm, amount: e.target.value })} className="input-field" placeholder="Enter amount" />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-700 mb-1 block">Description</label>
+            <input required value={topUpForm.description} onChange={(e) => setTopUpForm({ ...topUpForm, description: e.target.value })} className="input-field" placeholder="Reason for top-up" />
+          </div>
+          <button type="submit" className="btn-success w-full justify-center">Add Funds</button>
+        </form>
+      </Modal>
     </div>
   );
 };

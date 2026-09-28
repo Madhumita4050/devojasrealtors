@@ -8,21 +8,22 @@ export default {
     extend: {
       colors: {
         brand: {
-          navy: '#12372A',
-          navyLight: '#1E5B47',
-          gold: '#D7A43B',
-          goldLight: '#F4C766',
-          dark: '#071812',
+          navy: '#0F2C2A',
+          navyLight: '#16423F',
+          gold: '#E6A863',
+          goldLight: '#F3D1A5',
+          dark: '#071514',
         }
       },
       boxShadow: {
-        glow: '0 22px 70px rgba(18, 55, 42, 0.16)',
-        lift: '0 18px 45px rgba(47, 36, 18, 0.12)',
+        glow: '0 22px 70px rgba(10, 17, 40, 0.25)',
+        lift: '0 18px 45px rgba(197, 160, 89, 0.15)',
       },
       animation: {
         floatSlow: 'floatSlow 7s ease-in-out infinite',
         fadeUp: 'fadeUp .7s ease-out both',
         shimmer: 'shimmer 8s linear infinite',
+        marquee: 'marquee 25s linear infinite',
       },
       keyframes: {
         floatSlow: {
@@ -37,10 +38,15 @@ export default {
           '0%': { backgroundPosition: '0% 50%' },
           '100%': { backgroundPosition: '200% 50%' },
         },
+        marquee: {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-50%)' },
+        }
       },
       fontFamily: {
-        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
-        display: ['Montserrat', 'Inter', 'ui-sans-serif', 'system-ui'],
+        sans: ['"DM Sans"', 'sans-serif'],
+        serif: ['Outfit', 'sans-serif'],
+        display: ['Outfit', 'sans-serif'],
       }
     },
   },

@@ -90,4 +90,40 @@ const processWithdrawal = async (req, res, next) => {
   }
 };
 
-module.exports = { getWallets, getWalletTransactions, getWithdrawalRequests, processWithdrawal };
+// @desc Add funds to wallet manually by admin
+// @route POST /api/wallets/:userId/add-funds
+const addFunds = async (req, res, next) => {
+  try {
+    const { amount, description } = req.body;
+    if (!amount || amount <= 0) return res.status(400).json({ success: false, message: 'Invalid amount' });
+
+    let wallet = await Wallet.findOne({ where: { user_id: req.params.userId } });
+    if (!wallet) {
+      wallet = await Wallet.create({ user_id: req.params.userId, balance: 0 });
+    }
+
+    wallet.balance = parseFloat(wallet.balance) + parseFloat(amount);
+    await wallet.save();
+
+    await WalletTransaction.create({
+      user_id: req.params.userId,
+      amount,
+      type: 'credit',
+      status: 'completed',
+      description: description || 'Manual wallet top-up by admin'
+    });
+
+    await Notification.create({
+      user_id: req.params.userId,
+      title: 'Wallet Top-Up',
+      message: `Your wallet has been credited with ₹${amount}.`,
+      type: 'payment'
+    });
+
+    res.json({ success: true, data: wallet });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { getWallets, getWalletTransactions, getWithdrawalRequests, processWithdrawal, addFunds };

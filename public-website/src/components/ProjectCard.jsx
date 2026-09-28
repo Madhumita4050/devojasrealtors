@@ -162,17 +162,21 @@ export default function ProjectCard({ project, onSelectPlotForEnquiry }) {
             </div>
 
             {/* Landmarks section */}
-            <div className="bg-white/80 p-3.5 rounded-xl space-y-2 border border-brand-navy/10">
-              <div className="flex items-center space-x-2 text-xs font-bold text-brand-navy uppercase tracking-wider">
-                <Landmark className="h-4 w-4 text-brand-gold" />
+            <div className="bg-white p-5 sm:p-6 rounded-2xl space-y-4 border border-brand-navy/15 shadow-sm mt-4">
+              <div className="flex items-center space-x-2 text-sm sm:text-base font-bold text-brand-navy uppercase tracking-wider pb-3 border-b border-gray-100">
+                <Landmark className="h-5 w-5 text-brand-gold" />
                 <span>Nearby Strategic Landmarks</span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs text-gray-600">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm text-gray-700">
                 {landmarks.map((landmark, idx) => (
-                  <div key={idx} className="flex items-center space-x-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-brand-gold shrink-0" />
-                    <span className="font-semibold text-gray-800">{landmark.name}:</span>
-                    <span className="text-gray-500 text-[11px]"> {landmark.distance}</span>
+                  <div key={idx} className="flex flex-col xl:flex-row xl:items-center justify-between p-3.5 bg-gray-50 rounded-xl border border-gray-150 hover:border-brand-gold/40 hover:bg-brand-gold/5 transition-all shadow-sm">
+                    <div className="flex items-center space-x-2.5">
+                      <span className="h-2.5 w-2.5 rounded-full bg-brand-gold shadow-sm shrink-0" />
+                      <span className="font-bold text-brand-navy text-[13px] sm:text-[15px]">{landmark.name}</span>
+                    </div>
+                    <span className="text-gray-600 font-medium xl:text-right mt-1.5 xl:mt-0 text-[12px] sm:text-[13px] bg-white px-2 py-1 rounded border border-gray-100 self-start xl:self-auto">
+                      {landmark.distance}
+                    </span>
                   </div>
                 ))}
               </div>

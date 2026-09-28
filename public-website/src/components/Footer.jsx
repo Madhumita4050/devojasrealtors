@@ -5,8 +5,8 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative overflow-hidden bg-brand-dark text-white pt-16 pb-8 border-t-4 border-brand-gold">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(215,164,59,0.20),transparent_28rem),radial-gradient(circle_at_80%_35%,rgba(30,91,71,0.40),transparent_30rem)]" />
+    <footer className="relative bg-brand-dark text-white pt-16 pb-8 border-t border-brand-gold/30">
+      <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
       <div className="relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
@@ -27,10 +27,6 @@ export default function Footer() {
             <p className="text-sm text-white/70 leading-relaxed">
               We specialize in offering high-return, verified residential plots in prime locations. Buy your dream plot in Devojas City today and secure your future.
             </p>
-            <div className="flex items-center space-x-2 text-brand-gold font-semibold text-sm">
-              <ShieldCheck className="h-4 w-4" />
-              <span>RERA Approved Projects</span>
-            </div>
           </div>
 
           {/* Quick Links */}

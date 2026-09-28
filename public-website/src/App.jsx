@@ -12,6 +12,7 @@ import TermsConditions from './pages/TermsConditions';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import RefundCancellation from './pages/RefundCancellation';
 import CookiesPolicy from './pages/CookiesPolicy';
+import PlotInventory from './pages/PlotInventory';
 import FloatingCTA from './components/FloatingCTA';
 
 // Scroll to top helper on route change
@@ -39,6 +40,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/projects" element={<Projects />} />
+          <Route path="/plot-inventory" element={<PlotInventory />} />
           <Route path="/location" element={<Location />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/contact" element={<Contact />} />

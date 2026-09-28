@@ -15,11 +15,11 @@ export default function Location() {
 
   const landmarks = [
     { name: 'Kaithi NHAI Toll Plaza', distance: '0.5 KM', duration: '1 Min', type: 'Highway Access' },
-    { name: 'Markandeya Mahadev Mandir (Sangam)', distance: '1.5 KM', duration: '3 Mins', type: 'Spiritual Heritage' },
+    { name: 'Markandeya Mahadev Mandir (Sangam)', distance: '3.5 KM', duration: '8 Mins', type: 'Spiritual Heritage' },
     { name: 'Ishwar Chand Vidya Public School', distance: 'Adjacent', duration: '0 Mins', type: 'Education' },
-    { name: 'Swarved Mahamandir (Umaraha)', distance: '16 KM', duration: '18 Mins', type: 'Spiritual Center' },
+    { name: 'Swarved Mahamandir (Umaraha)', distance: '10 KM Approx', duration: '15 Mins', type: 'Spiritual Center' },
     { name: 'Ring Road Phase 2 Connectivity', distance: '12 KM', duration: '14 Mins', type: 'Expressway' },
-    { name: 'Varanasi Junction (Cantt Station)', distance: '28 KM', duration: '35 Mins', type: 'Transit Hub' },
+    { name: 'Varanasi Junction (Cantt Station)', distance: '25 KM Approx', duration: '35 Mins', type: 'Transit Hub' },
     { name: 'Lal Bahadur Shastri Airport (Babatpur)', distance: '42 KM', duration: '50 Mins', type: 'Airport' },
     { name: 'Ghazipur City Boundary', distance: '42 KM', duration: '45 Mins', type: 'Highway Corridor' },
   ];
@@ -95,7 +95,7 @@ export default function Location() {
             Kaithi Toll Plaza & Markandeya Mahadev Corridor
           </h1>
           <p className="text-sm sm:text-base text-white/70 max-w-3xl mx-auto leading-relaxed">
-            Strategically located at **Bhandaha Kalan, Kaithi**, right along the Varanasi-Ghazipur Highway near Kaithi NHAI Toll Plaza and 1.5 KM from Markandeya Mahadev Mandir.
+            Strategically located at **Bhandaha Kalan, Kaithi**, right along the Varanasi-Ghazipur Highway near Kaithi NHAI Toll Plaza and 3.5 KM from Markandeya Mahadev Mandir.
           </p>
         </div>
       </section>
@@ -109,7 +109,7 @@ export default function Location() {
             </div>
             <h3 className="font-serif font-bold text-brand-navy text-lg">Markandeya Mahadev Corridor</h3>
             <p className="text-xs text-gray-600 leading-relaxed">
-              Just 1.5 KM from the sacred confluence of holy Ganga & Gomti rivers. An auspicious and rapid infrastructure development zone.
+              Just 3.5 KM from the sacred confluence of holy Ganga & Gomti rivers. An auspicious and rapid infrastructure development zone.
             </p>
           </div>
 
@@ -277,7 +277,7 @@ export default function Location() {
             </div>
 
             <a
-              href="https://www.google.com/maps/search/?api=1&query=Markandey+Mahadev+Kaithi+Varanasi"
+              href="https://maps.google.com/maps?q=25.4996333,83.144175&z=17&hl=en"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center space-x-2 bg-brand-gold hover:bg-brand-goldLight text-brand-navy font-bold px-4 py-2.5 rounded-xl text-xs shadow-md transition-all self-start sm:self-auto cursor-pointer"
@@ -290,7 +290,7 @@ export default function Location() {
           <div className="h-[480px] w-full bg-gray-100 relative">
             <iframe 
               title="Devojas City Project Location Map"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14397.940608552194!2d83.16912384666579!3d25.488880628286202!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x398e1bb3493dbab5%3A0x6b44fb7efd40c6c4!2sKaithi%2C%20Uttar%20Pradesh%20221116!5e0!3m2!1sen!2sin!4v1724248450129!5m2!1sen!2sin" 
+              src="https://maps.google.com/maps?q=25.4996333,83.144175&t=&z=17&ie=UTF8&iwloc=&output=embed" 
               className="w-full h-full border-none"
               allowFullScreen="" 
               loading="lazy" 

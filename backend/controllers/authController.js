@@ -37,6 +37,7 @@ const register = async (req, res, next) => {
       role: role || 'client',
       referred_by: referred_by || null,
       referral_commission_percent: referral_commission_percent || null,
+      commission_percent: referral_commission_percent || null,
       pan_number: pan_number || null,
       aadhar_number: aadhar_number || null,
       referral_code,
@@ -139,6 +140,7 @@ const registerAssociate = async (req, res, next) => {
       role: 'associate',
       referred_by,
       referral_commission_percent: 5, // default 5%
+      commission_percent: 5,
       pan_number,
       aadhar_number,
       referral_code,

@@ -18,6 +18,12 @@ const Commissions = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savedMsg, setSavedMsg] = useState('');
+  
+  const [specificId, setSpecificId] = useState('');
+  const [specificPercent, setSpecificPercent] = useState('');
+  const [updating, setUpdating] = useState(false);
+  const [updateMsg, setUpdateMsg] = useState('');
+  const [updateErr, setUpdateErr] = useState('');
 
   const fetchData = async () => {
     setLoading(true);
@@ -58,6 +64,33 @@ const Commissions = () => {
     }
   };
 
+  const handleUpdateSpecific = async (e) => {
+    e.preventDefault();
+    setUpdating(true);
+    setUpdateMsg('');
+    setUpdateErr('');
+    try {
+      const res = await api.get('/users', { params: { search: specificId } });
+      const user = res.data.data.find(u => u.login_id === specificId && u.role === 'associate');
+      
+      if (!user) {
+        setUpdateErr('Associate not found with that Login ID.');
+        setUpdating(false);
+        return;
+      }
+      
+      await api.put(`/users/${user.id}`, { commission_percent: specificPercent, referral_commission_percent: specificPercent });
+      
+      setUpdateMsg(`Commission updated for ${user.name} (${user.login_id})`);
+      setSpecificId('');
+      setSpecificPercent('');
+    } catch (err) {
+      setUpdateErr(err.response?.data?.message || 'Error updating commission');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -95,6 +128,28 @@ const Commissions = () => {
           </form>
         </div>
       )}
+
+      {/* Update Specific Associate Commission Form */}
+      <div className="card">
+        <h3 className="font-semibold text-gray-800 mb-4">Update Specific Associate Commission</h3>
+        {updateMsg && <div className="bg-emerald-50 text-emerald-600 text-sm px-3 py-2 rounded-lg mb-4">{updateMsg}</div>}
+        {updateErr && <div className="bg-red-50 text-red-600 text-sm px-3 py-2 rounded-lg mb-4">{updateErr}</div>}
+        <form onSubmit={handleUpdateSpecific} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label className="text-sm font-medium text-gray-700 mb-1 block">Associate Login ID</label>
+            <input required type="text" value={specificId} onChange={(e) => setSpecificId(e.target.value)} placeholder="e.g. DEV-0001" className="input-field" />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-700 mb-1 block">New Commission %</label>
+            <input required type="number" step="0.1" value={specificPercent} onChange={(e) => setSpecificPercent(e.target.value)} className="input-field" />
+          </div>
+          <div className="flex items-end">
+            <button type="submit" disabled={updating} className="btn-primary w-full flex items-center justify-center gap-2">
+              <Save size={16} /> {updating ? 'Updating...' : 'Update Commission'}
+            </button>
+          </div>
+        </form>
+      </div>
 
       {/* Commission History */}
       <div className="card overflow-x-auto p-0">

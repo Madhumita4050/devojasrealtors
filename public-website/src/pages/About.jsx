@@ -67,7 +67,7 @@ export default function About() {
     },
     {
       q: "Where is the project site exactly located?",
-      a: "The project is located at Bhandaha Kalan, Kaithi, situated right on the Varanasi-Ghazipur Highway corridor near Kaithi Toll Plaza and 1.5 KM from the sacred Markandeya Mahadev Mandir (Sangam of Ganga & Gomti rivers)."
+      a: "The project is located at Bhandaha Kalan, Kaithi, situated right on the Varanasi-Ghazipur Highway corridor near Kaithi Toll Plaza and 3.5 KM from the sacred Markandeya Mahadev Mandir (Sangam of Ganga & Gomti rivers)."
     },
     {
       q: "Is the land free from legal disputes?",
@@ -242,7 +242,7 @@ export default function About() {
               </div>
               <div className="bg-white p-3.5 rounded-xl border border-gray-150 shadow-sm text-left">
                 <Building2 className="h-5 w-5 text-brand-gold mb-1" />
-                <span className="block text-xs font-bold text-brand-navy">20-40 Ft Roads</span>
+                <span className="block text-xs font-bold text-brand-navy">25-40 Ft Roads</span>
                 <span className="text-[10px] text-gray-500">Wide Internal Network</span>
               </div>
               <div className="bg-white p-3.5 rounded-xl border border-gray-150 shadow-sm text-left">

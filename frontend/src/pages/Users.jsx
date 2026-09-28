@@ -71,7 +71,7 @@ const Users = () => {
     setForm({
       ...emptyForm,
       role: prefillRole,
-      referral_commission_percent: prefillRole === 'associate' ? 5 : ''
+      referral_commission_percent: prefillRole === 'associate' ? 5 : form.referral_commission_percent || 5
     });
     setError('');
     setCreatedCreds(null);
@@ -161,11 +161,21 @@ const Users = () => {
     } catch (err) { alert(err.response?.data?.message || 'Error rejecting'); }
   };
 
-  const handleImpersonate = async (id) => {
+  const handleImpersonate = async (id, role) => {
     try {
       const res = await api.post(`/users/${id}/impersonate`);
       const { token } = res.data;
-      const impersonationUrl = `${window.location.origin}/associate?impersonation_token=${token}`;
+      const adminPanelUrl = window.location.origin;
+      let impersonationUrl;
+      if (role === 'associate') {
+        impersonationUrl = `${adminPanelUrl}/associate?impersonation_token=${token}`;
+      } else if (role === 'client') {
+        impersonationUrl = `${adminPanelUrl}/client?impersonation_token=${token}`;
+      } else if (role === 'accounts') {
+        impersonationUrl = `${adminPanelUrl}/accounts?impersonation_token=${token}`;
+      } else {
+        impersonationUrl = `${adminPanelUrl}/?impersonation_token=${token}`;
+      }
       window.open(impersonationUrl, '_blank');
     } catch (err) { alert(err.response?.data?.message || 'Error impersonating'); }
   };
@@ -269,18 +279,18 @@ const Users = () => {
           <thead>
             <tr>
               <th>Name & ID</th>
-              <th>Contact Details</th>
+              <th>Phone / Email</th>
+              <th>Login Credentials</th>
               <th>Role</th>
-              <th>KYC Status</th>
-              <th>Account Status</th>
+              <th>KYC / Status</th>
               <th className="text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan="6" className="text-center py-12 text-slate-400 text-base">Loading users...</td></tr>
+              <tr><td colSpan="7" className="text-center py-12 text-slate-400 text-base">Loading users...</td></tr>
             ) : users.length === 0 ? (
-              <tr><td colSpan="6" className="text-center py-12 text-slate-400 text-base">No users found in this tab</td></tr>
+              <tr><td colSpan="7" className="text-center py-12 text-slate-400 text-base">No users found in this tab</td></tr>
             ) : (
               users.map((u) => (
                 <tr key={u.id}>
@@ -293,13 +303,29 @@ const Users = () => {
                     )}
                   </td>
                   <td>
-                    <div className="text-slate-800 font-medium">{u.email || 'No email'}</div>
+                    <div className="text-slate-800 font-medium text-sm">{u.email || '—'}</div>
                     <div className="text-xs text-slate-500 font-mono mt-0.5">{u.phone}</div>
-                    {u.plain_password && (
-                      <div className="text-xs font-mono mt-1 text-red-600 bg-red-50 px-1 py-0.5 inline-block rounded border border-red-200" title="Password">
-                        Pwd: {u.plain_password}
+                  </td>
+                  <td>
+                    {/* Password box — visible for all users */}
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide w-7">ID:</span>
+                        <span className="text-xs font-mono font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
+                          {u.login_id || '—'}
+                        </span>
                       </div>
-                    )}
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide w-7">Pwd:</span>
+                        {u.plain_password ? (
+                          <span className="text-xs font-mono font-semibold text-red-700 bg-red-50 px-2 py-0.5 rounded border border-red-200">
+                            {u.plain_password}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-slate-400 italic">not saved</span>
+                        )}
+                      </div>
+                    </div>
                   </td>
                   <td>
                     <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase ${
@@ -310,17 +336,16 @@ const Users = () => {
                       {u.role}
                     </span>
                   </td>
-                  <td><Badge status={u.kyc_status} /></td>
-                  <td><Badge status={u.status} /></td>
+                  <td>
+                    <Badge status={u.kyc_status} />
+                    <div className="mt-1"><Badge status={u.status} /></div>
+                  </td>
                   <td>
                     <div className="flex items-center justify-end gap-2">
                       {u.kyc_status === 'pending' && (
                         <>
                           <button onClick={() => handleKyc(u.id, 'approved')} title="Approve KYC" className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-xl">
                             <ShieldCheck size={18} />
-                          </button>
-                          <button onClick={() => handleKyc(u.id, 'rejected')} title="Reject KYC" className="p-2 text-red-500 hover:bg-red-50 rounded-xl">
-                            <ShieldX size={18} />
                           </button>
                         </>
                       )}
@@ -329,13 +354,15 @@ const Users = () => {
                           <button onClick={() => handleApproveAssociate(u.id)} title="Approve Associate" className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-xl">
                             <CheckSquare size={18} />
                           </button>
-                          <button onClick={() => handleRejectAssociate(u.id)} title="Reject Associate" className="p-2 text-red-500 hover:bg-red-50 rounded-xl">
-                            <XSquare size={18} />
-                          </button>
                         </>
                       )}
                       {u.role === 'associate' && u.status === 'active' && (
-                        <button onClick={() => handleImpersonate(u.id)} title="Login as Associate" className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl border border-blue-200">
+                        <button onClick={() => handleImpersonate(u.id, 'associate')} title="Login as Associate" className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl border border-blue-200">
+                          <LogIn size={18} />
+                        </button>
+                      )}
+                      {(u.role === 'client' || u.role === 'accounts') && u.status === 'active' && (
+                        <button onClick={() => handleImpersonate(u.id)} title={`Login as ${u.role}`} className="p-2 text-purple-600 hover:bg-purple-50 rounded-xl border border-purple-200">
                           <LogIn size={18} />
                         </button>
                       )}
@@ -458,17 +485,16 @@ const Users = () => {
           </div>
           {(form.referred_by || form.role === 'associate') && (
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-1 block">Commission % {form.role === 'associate' ? '(fixed for Associates)' : 'This User Gives To Referrer'}</label>
+              <label className="text-sm font-medium text-gray-700 mb-1 block">Commission % (Earned by this Associate/Referrer)</label>
               <input
                 type="number" step="0.1"
                 value={form.referral_commission_percent}
-                disabled={form.role === 'associate'}
                 onChange={(e) => setForm({ ...form, referral_commission_percent: e.target.value })}
-                className="input-field disabled:bg-gray-100 disabled:text-gray-500"
-                placeholder="e.g. 10"
+                className="input-field"
+                placeholder="e.g. 5"
               />
               <p className="text-xs text-gray-400 mt-1">
-                {form.role === 'associate' ? 'Every Associate gets a fixed 5% commission.' : 'Fixed % the referrer earns whenever this user closes a deal — set once here by Admin.'}
+                Admin can increase or decrease this percentage.
               </p>
             </div>
           )}
