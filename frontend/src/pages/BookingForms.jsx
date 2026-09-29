@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FileText, Plus, Edit2, Trash2, Eye, CheckCircle, XCircle, Clock, Download, X, AlertCircle, ChevronRight, Printer } from 'lucide-react';
-import api from '../../api/axios';
-import { useAuth } from '../../context/AuthContext';
+import api from '../api/axios';
+import { useAuth } from '../context/AuthContext';
 
 const emptyForm = {
   project_name: '', plot_size: '', sector_no: '', plot_no: '',
