@@ -46,6 +46,7 @@ import AssociateProfile from './pages/associate/Profile';
 import AssociateNotifications from './pages/associate/AssociateNotifications';
 import AssociateSupport from './pages/associate/Support';
 import AssociateBookingForms from './pages/associate/BookingForms';
+import MyPayoutStatements from './pages/associate/MyPayoutStatements';
 
 // ---------- NEW: Accounts Panel imports ----------
 import AccountsLayout from './components/accounts/AccountsLayout';
@@ -130,6 +131,7 @@ function App() {
             <Route path="/associate/notifications" element={<AssociateNotifications />} />
             <Route path="/associate/support" element={<AssociateSupport />} />
             <Route path="/associate/booking-forms" element={<AssociateBookingForms />} />
+            <Route path="/associate/payout-statements" element={<MyPayoutStatements />} />
           </Route>
 
           {/* ---------- ACCOUNTS PANEL (new) ---------- */}

@@ -30,6 +30,7 @@ const emiRoutes = require('./routes/emiRoutes'); // NEW: EMI plan & installments
 const settingsRoutes = require('./routes/settingsRoutes'); // NEW: Company settings (logo/name)
 const enquiryRoutes = require('./routes/enquiryRoutes'); // NEW: Website enquiries (admin view)
 const bookingFormRoutes = require('./routes/bookingFormRoutes');
+const payoutStatementRoutes = require('./routes/payoutStatementRoutes');
 const uploadRoutes = require('./routes/uploadRoutes'); // NEW: Generic file upload (e.g. company logo)
 
 const app = express();
@@ -82,6 +83,7 @@ app.use('/api/public', publicRoutes); // NEW: Public plot API (no auth needed)
 app.use('/api/settings', settingsRoutes); // NEW: Company settings (logo/name)
 app.use('/api/enquiries', enquiryRoutes); // NEW: Website enquiries (admin view)
 app.use('/api/booking-forms', bookingFormRoutes);
+app.use('/api/payout-statements', payoutStatementRoutes);
 app.use('/api/upload', uploadRoutes); // NEW: Generic file upload (company logo, etc.)
 app.use('/uploads', express.static(require('path').join(__dirname, 'uploads'))); // NEW: serve uploaded logo/PDF files
 

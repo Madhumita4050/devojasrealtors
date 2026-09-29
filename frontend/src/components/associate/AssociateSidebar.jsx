@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard, Users, Percent, Wallet, Search, User, Bell,
   Headphones, LogOut, Building2, Home, Trophy, Network, ChevronRight,
-  IndianRupee, TrendingUp, FileText
+  IndianRupee, TrendingUp, FileText, Receipt
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api/axios';
@@ -15,6 +15,7 @@ const menuItems = [
   { title: 'My Reward', icon: Trophy, path: '/associate/my-reward' },
   { title: 'Commission History', icon: Percent, path: '/associate/commissions' },
   { title: 'Booking Forms', icon: FileText, path: '/associate/booking-forms' },
+  { title: 'My Payouts', icon: Receipt, path: '/associate/payout-statements' },
   { title: 'Wallet & Withdraw', icon: Wallet, path: '/associate/wallet' },
   { title: 'Browse Plots', icon: Search, path: '/associate/plots' },
   { title: 'My Profile & KYC', icon: User, path: '/associate/profile' },
