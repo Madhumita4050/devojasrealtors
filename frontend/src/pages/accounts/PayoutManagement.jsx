@@ -13,7 +13,7 @@ const emptyForm = {
   self_business: '',
   team_business: '',
   slab_percent: '',
-  tds_percent: '10',
+  tds_percent: '5',
   processing_percent: '2',
   notes: ''
 };

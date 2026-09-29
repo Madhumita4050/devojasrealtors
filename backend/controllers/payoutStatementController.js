@@ -20,7 +20,7 @@ const calculate = (data) => {
   const teamBusiness = parseFloat(data.team_business) || 0;
   const totalBusiness = selfBusiness + teamBusiness;
   const slabPercent = parseFloat(data.slab_percent) || 0;
-  const tdsPercent = parseFloat(data.tds_percent) ?? 10;
+  const tdsPercent = parseFloat(data.tds_percent) ?? 5;
   const processingPercent = parseFloat(data.processing_percent) ?? 2;
 
   const selfDeposit = parseFloat((selfBusiness * slabPercent / 100).toFixed(2));
@@ -54,7 +54,7 @@ const createPayoutStatement = async (req, res, next) => {
     const slab = await findSlab(totalBusiness);
 
     const effectiveSlabPercent = slab_percent !== undefined ? parseFloat(slab_percent) : (slab?.percentage || 0);
-    const effectiveTds = tds_percent !== undefined ? parseFloat(tds_percent) : 10;
+    const effectiveTds = tds_percent !== undefined ? parseFloat(tds_percent) : 5;
     const effectiveProcessing = processing_percent !== undefined ? parseFloat(processing_percent) : 2;
 
     const calc = calculate({ self_business, team_business, slab_percent: effectiveSlabPercent, tds_percent: effectiveTds, processing_percent: effectiveProcessing });

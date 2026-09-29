@@ -22,7 +22,7 @@ const PayoutStatement = sequelize.define('PayoutStatement', {
   self_deposit: { type: DataTypes.DECIMAL(15, 2), defaultValue: 0 },   // self_business * slab_percent / 100
   team_deposit: { type: DataTypes.DECIMAL(15, 2), defaultValue: 0 },   // team_business * slab_percent / 100
   total_amount: { type: DataTypes.DECIMAL(15, 2), defaultValue: 0 },   // self_deposit + team_deposit
-  tds_percent: { type: DataTypes.FLOAT, defaultValue: 10 },             // default 10%
+  tds_percent: { type: DataTypes.FLOAT, defaultValue: 5 },             // default 5%
   tds_amount: { type: DataTypes.DECIMAL(15, 2), defaultValue: 0 },     // total_amount * tds_percent / 100
   processing_percent: { type: DataTypes.FLOAT, defaultValue: 2 },       // default 2%
   processing_amount: { type: DataTypes.DECIMAL(15, 2), defaultValue: 0 }, // total_amount * processing_percent / 100
