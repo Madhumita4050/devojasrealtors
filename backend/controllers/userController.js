@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const { Op } = require('sequelize');
-const { User, Wallet } = require('../models');
+const { User, Wallet, WalletTransaction } = require('../models');
 const generateReferralCode = require('../utils/generateReferralCode');
 const generatePassword = require('../utils/generatePassword');
 const { sendAssociateCredentials } = require('../services/emailService');

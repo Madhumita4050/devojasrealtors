@@ -362,13 +362,14 @@ async function createTeamMember(req, res, next) {
   } catch (error) { next(error); }
 }
 
-// @desc  Get MY network (flat list of everyone below me)
+// @desc  Get MY network (tree structure)
 // @route GET /api/associate/network
 async function getMyNetwork(req, res, next) {
   try {
     const flatList = await fetchTree(req.user.id);
-    const network = flatList.filter(u => u.id !== req.user.id);
-    res.json({ success: true, data: network, totalCount: network.length });
+    const networkTree = buildTree(flatList, req.user.id);
+    const totalCount = flatList.length - 1; // excluding self
+    res.json({ success: true, data: networkTree, totalCount });
   } catch (error) { next(error); }
 }
 

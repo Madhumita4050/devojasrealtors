@@ -111,17 +111,15 @@ const Users = () => {
         setModalOpen(false);
       } else {
         const res = await api.post('/users', form);
-        if (form.role === 'associate') {
-          // Password system ne khud generate kiya hai — admin ko yahin dikhado
-          setCreatedCreds({
-            referral_code: res.data.data.referral_code,
-            loginId: res.data.data.email || res.data.data.phone,
-            generatedPassword: res.data.generatedPassword,
-            emailSent: res.data.emailSent
-          });
-        } else {
-          setModalOpen(false);
-        }
+        
+        // Show credentials for all users so admin has them
+        setCreatedCreds({
+          referral_code: res.data.data.referral_code,
+          loginId: res.data.data.login_id || res.data.data.email || res.data.data.phone,
+          generatedPassword: res.data.generatedPassword || form.password || '123456',
+          emailSent: res.data.emailSent || false,
+          role: res.data.data.role
+        });
       }
       fetchUsers();
       fetchAssociates();
@@ -392,15 +390,19 @@ const Users = () => {
         {createdCreds ? (
           <div className="text-center space-y-4">
             <CheckCircle className="mx-auto text-emerald-500" size={44} />
-            <h3 className="text-xl font-bold text-slate-900">Associate Account Created!</h3>
+            <h3 className="text-xl font-bold text-slate-900">{createdCreds.role ? createdCreds.role.charAt(0).toUpperCase() + createdCreds.role.slice(1) : 'User'} Account Created!</h3>
             <p className="text-sm text-slate-500">
-              {createdCreds.emailSent ? 'Login details have also been emailed to the associate.' : 'Email not configured — share these details with the associate manually.'}
+              {createdCreds.emailSent ? 'Login details have also been emailed to the user.' : 'Email not configured — share these details with the user manually.'}
             </p>
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 text-left space-y-3 text-base">
-              <div className="flex justify-between"><span className="text-slate-500">Associate ID</span><span className="font-bold text-slate-900">{createdCreds.referral_code}</span></div>
+              {createdCreds.role === 'associate' && (
+                <div className="flex justify-between"><span className="text-slate-500">Associate ID</span><span className="font-bold text-slate-900">{createdCreds.referral_code}</span></div>
+              )}
               <div className="flex justify-between"><span className="text-slate-500">Login ID</span><span className="font-bold text-blue-600">{createdCreds.loginId}</span></div>
               <div className="flex justify-between"><span className="text-slate-500">Password</span><span className="font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">{createdCreds.generatedPassword}</span></div>
-              <div className="flex justify-between"><span className="text-slate-500">Commission</span><span className="font-bold text-slate-900">5%</span></div>
+              {createdCreds.role === 'associate' && (
+                <div className="flex justify-between"><span className="text-slate-500">Commission</span><span className="font-bold text-slate-900">5%</span></div>
+              )}
             </div>
             <button className="btn-primary w-full text-base py-3" onClick={() => setModalOpen(false)}>Done</button>
           </div>
