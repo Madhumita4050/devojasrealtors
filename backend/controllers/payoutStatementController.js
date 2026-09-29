@@ -30,7 +30,15 @@ const calculate = (data) => {
   const processingAmount = parseFloat((totalAmount * processingPercent / 100).toFixed(2));
   const netPayable = parseFloat((totalAmount - tdsAmount - processingAmount).toFixed(2));
 
-  return { totalBusiness, selfDeposit, teamDeposit, totalAmount, tdsAmount, processingAmount, netPayable };
+  return { 
+    total_business: totalBusiness, 
+    self_deposit: selfDeposit, 
+    team_deposit: teamDeposit, 
+    total_amount: totalAmount, 
+    tds_amount: tdsAmount, 
+    processing_amount: processingAmount, 
+    net_payable: netPayable 
+  };
 };
 
 // @desc Get slab suggestion based on business amount
@@ -65,7 +73,7 @@ const createPayoutStatement = async (req, res, next) => {
       payment_date,
       self_business: parseFloat(self_business) || 0,
       team_business: parseFloat(team_business) || 0,
-      total_business: calc.totalBusiness,
+      total_business: calc.total_business,
       slab_id: slab?.id || null,
       slab_percent: effectiveSlabPercent,
       reward_amount: slab?.reward_amount || 0,
@@ -142,7 +150,7 @@ const updatePayoutStatement = async (req, res, next) => {
 
     await stmt.update({
       ...req.body,
-      total_business: calc.totalBusiness,
+      total_business: calc.total_business,
       slab_percent: effectiveSlabPercent,
       ...calc
     });
