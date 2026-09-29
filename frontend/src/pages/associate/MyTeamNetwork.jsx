@@ -125,13 +125,6 @@ const AssociateMyTeamNetwork = () => {
           <div className="overflow-x-auto pb-8 pt-4">
             <div className="min-w-max p-4 flex justify-center">
               <NetworkTreeNode node={tree} depth={0} serial={serial} isHorizontal={true} />
-
-              {(!tree.children || tree.children.length === 0) && (
-                <div className="mt-8 text-center bg-[#0d1d47]/50 border border-[#1e2f5a] rounded-2xl p-6 max-w-sm">
-                  <p className="text-slate-300 text-sm font-medium">No team members yet</p>
-                  <p className="text-slate-500 text-xs mt-1">Use the "Add Team Member" button at the top to add your first direct recruit</p>
-                </div>
-              )}
             </div>
           </div>
         )}
