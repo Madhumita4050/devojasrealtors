@@ -103,6 +103,8 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
       let result;
       if (signupRole === 'associate') {
         result = await authService.signupAssociate(signupForm);
+      } else if (signupRole === 'accounts') {
+        result = await authService.signupAccounts(signupForm);
       } else {
         result = await authService.signupClient(signupForm);
       }
@@ -281,6 +283,15 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
                   }`}
                 >
                   👤 Client
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setSignupRole('accounts'); setError(''); }}
+                  className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
+                    signupRole === 'accounts' ? 'bg-brand-navy text-white shadow' : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  💼 Accounts
                 </button>
               </div>
 

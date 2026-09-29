@@ -59,7 +59,7 @@ const Users = () => {
   const setTab = (tab) => {
     if (tab === 'all') setSearchParams({});
     else if (tab === 'kyc') setSearchParams({ kyc_status: 'pending' });
-    else if (tab === 'pending') setSearchParams({ role: 'associate', status: 'pending_approval' });
+    else if (tab === 'pending') setSearchParams({ status: 'pending_approval' });
     else setSearchParams({ role: tab });
   };
 
@@ -258,7 +258,7 @@ const Users = () => {
               : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
           }`}
         >
-          <span>Pending Associates</span>
+          <span>Pending Approvals</span>
         </button>
       </div>
 
@@ -347,9 +347,9 @@ const Users = () => {
                           </button>
                         </>
                       )}
-                      {u.status === 'pending_approval' && u.role === 'associate' && (
+                      {u.status === 'pending_approval' && (
                         <>
-                          <button onClick={() => handleApproveAssociate(u.id)} title="Approve Associate" className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-xl">
+                          <button onClick={() => handleApproveAssociate(u.id)} title="Approve User" className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-xl">
                             <CheckSquare size={18} />
                           </button>
                         </>

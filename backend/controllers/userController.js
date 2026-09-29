@@ -220,14 +220,16 @@ const getReferralTree = async (req, res, next) => {
   }
 };
 
-// @desc  Approve a pending associate registration (admin action)
+// @desc  Approve a pending user registration (admin action)
 // @route POST /api/users/:id/approve
 const approveAssociate = async (req, res, next) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (!user) return res.status(404).json({ success: false, message: 'User not found' });
-    if (user.role !== 'associate') {
-      return res.status(400).json({ success: false, message: 'Only associate registrations can be approved' });
+    
+    // We now allow approving any user in pending_approval state
+    if (user.status !== 'pending_approval') {
+      return res.status(400).json({ success: false, message: 'User is not pending approval' });
     }
 
     await user.update({ 
@@ -244,7 +246,7 @@ const approveAssociate = async (req, res, next) => {
     }
 
     const { password, ...userData } = user.toJSON();
-    res.json({ success: true, message: `Associate ${user.name} has been approved and can now login.`, data: userData });
+    res.json({ success: true, message: `${user.name} has been approved and can now login.`, data: userData });
   } catch (error) {
     next(error);
   }
@@ -264,7 +266,7 @@ const rejectAssociate = async (req, res, next) => {
       rejection_reason
     });
 
-    res.json({ success: true, message: `Associate ${user.name} rejected.` });
+    res.json({ success: true, message: `${user.name} rejected.` });
   } catch (error) {
     next(error);
   }

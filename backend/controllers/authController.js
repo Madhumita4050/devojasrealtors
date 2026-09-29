@@ -206,9 +206,9 @@ const login = async (req, res, next) => {
       return res.status(403).json({ success: false, message: 'Your account has been blocked. Please contact admin.' });
     }
 
-    // Associates must be approved before they can login
-    if (user.role === 'associate' && user.status === 'pending_approval') {
-      return res.status(403).json({ success: false, message: 'Aapki request admin approval ke wait mein hai.' });
+    // Users must be approved before they can login if they are in pending_approval state
+    if (user.status === 'pending_approval') {
+      return res.status(403).json({ success: false, message: 'Your account request is pending admin approval.' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -344,4 +344,63 @@ const registerClient = async (req, res, next) => {
   } catch (error) { next(error); }
 };
 
-module.exports = { register, registerAssociate, registerClient, login, getMe, updateProfile, changePassword };
+// @desc Public Accounts Registration
+// @route POST /api/auth/register-accounts
+const registerAccounts = async (req, res, next) => {
+  try {
+    const { name, email, phone, password, confirm_password, address } = req.body;
+
+    if (!name || !phone || !password) {
+      return res.status(400).json({ success: false, message: 'Name, phone and password are required' });
+    }
+    if (password !== confirm_password) {
+      return res.status(400).json({ success: false, message: 'Password and Confirm Password do not match' });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
+    }
+
+    const existingPhone = await User.findOne({ where: { phone } });
+    if (existingPhone) {
+      return res.status(400).json({ success: false, message: 'Phone number already registered' });
+    }
+    if (email) {
+      const existingEmail = await User.findOne({ where: { email } });
+      if (existingEmail) {
+        return res.status(400).json({ success: false, message: 'Email already registered' });
+      }
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const referral_code = generateReferralCode(name);
+
+    const user = await User.create({
+      name,
+      email: email || null,
+      phone,
+      address: address || null,
+      password: hashedPassword,
+      plain_password: password,
+      role: 'accounts',
+      referral_code,
+      kyc_status: 'not_submitted',
+      status: 'pending_approval'
+    });
+
+    const login_id = generateLoginId(user.id);
+    await user.update({ login_id });
+    await Wallet.create({ user_id: user.id, balance: 0 });
+
+    res.status(201).json({
+      success: true,
+      message: 'Registration successful! Admin will review and approve your account.',
+      data: {
+        login_id: user.login_id,
+        name: user.name,
+        referral_code: user.referral_code
+      }
+    });
+  } catch (error) { next(error); }
+};
+
+module.exports = { register, registerAssociate, registerClient, registerAccounts, login, getMe, updateProfile, changePassword };
