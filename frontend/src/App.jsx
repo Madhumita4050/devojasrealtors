@@ -19,6 +19,7 @@ import Settings from './pages/Settings';
 import SlabSettings from './pages/SlabSettings';
 import MyTeamNetworkAdmin from './pages/MyTeamNetwork';
 import PaymentsAndReceipts from './pages/PaymentsAndReceipts';
+import AdminBookingForms from './pages/accounts/BookingForms';
 
 // ---------- NEW: Client Panel imports ----------
 import ClientLayout from './components/client/ClientLayout';
@@ -44,6 +45,7 @@ import AssociateBrowsePlots from './pages/associate/BrowsePlots';
 import AssociateProfile from './pages/associate/Profile';
 import AssociateNotifications from './pages/associate/AssociateNotifications';
 import AssociateSupport from './pages/associate/Support';
+import AssociateBookingForms from './pages/associate/BookingForms';
 
 // ---------- NEW: Accounts Panel imports ----------
 import AccountsLayout from './components/accounts/AccountsLayout';
@@ -55,6 +57,7 @@ import FinancialReports from './pages/accounts/FinancialReports';
 import AllWallets from './pages/accounts/AllWallets';
 import ExportData from './pages/accounts/ExportData';
 import AccountsSupport from './pages/accounts/Support';
+import AccountsBookingForms from './pages/accounts/BookingForms';
 
 function App() {
   return (
@@ -85,6 +88,7 @@ function App() {
             <Route path="/slabs" element={<SlabSettings />} />
             <Route path="/network" element={<MyTeamNetworkAdmin />} />
             <Route path="/payments" element={<PaymentsAndReceipts />} />
+            <Route path="/booking-forms" element={<AdminBookingForms />} />
           </Route>
 
           {/* ---------- CLIENT PANEL (new) ---------- */}
@@ -125,6 +129,7 @@ function App() {
             <Route path="/associate/profile" element={<AssociateProfile />} />
             <Route path="/associate/notifications" element={<AssociateNotifications />} />
             <Route path="/associate/support" element={<AssociateSupport />} />
+            <Route path="/associate/booking-forms" element={<AssociateBookingForms />} />
           </Route>
 
           {/* ---------- ACCOUNTS PANEL (new) ---------- */}
@@ -143,6 +148,7 @@ function App() {
             <Route path="/accounts/wallets" element={<AllWallets />} />
             <Route path="/accounts/export" element={<ExportData />} />
             <Route path="/accounts/support" element={<AccountsSupport />} />
+            <Route path="/accounts/booking-forms" element={<AccountsBookingForms />} />
           </Route>
         </Routes>
       </AuthProvider>

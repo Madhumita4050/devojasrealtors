@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard, Users, Home, Receipt, Percent, Wallet,
   BarChart3, Image, Headphones, Settings, LogOut, ChevronDown,
-  Network, MessageSquare, ChevronRight, Bell
+  Network, MessageSquare, ChevronRight, Bell, FileText
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
@@ -49,6 +49,7 @@ const Sidebar = ({ collapsed }) => {
     },
     { title: "Transactions", icon: Receipt, path: "/transactions" },
     { title: "Payments & Receipts", icon: Receipt, path: "/payments" },
+    { title: "Booking Forms", icon: FileText, path: "/booking-forms" },
     {
       title: "Commission / Payroll", icon: Percent, path: "/commissions",
       sub: [

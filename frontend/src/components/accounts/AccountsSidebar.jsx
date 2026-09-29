@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, CreditCard, Send, FileText, BarChart3, Wallet, Download, Headphones, LogOut, Building2 } from 'lucide-react';
+import { LayoutDashboard, CreditCard, Send, FileText, BarChart3, Wallet, Download, Headphones, LogOut, Building2, ClipboardCheck } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api/axios';
 
 const menuItems = [
   { title: 'Dashboard', icon: LayoutDashboard, path: '/accounts' },
+  { title: 'Booking Forms', icon: ClipboardCheck, path: '/accounts/booking-forms' },
   { title: 'Payment Verification', icon: CreditCard, path: '/accounts/payments' },
   { title: 'Payout Management', icon: Send, path: '/accounts/payouts' },
   { title: 'Invoices & Receipts', icon: FileText, path: '/accounts/invoices' },

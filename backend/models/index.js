@@ -16,6 +16,7 @@ const EmiPlan = require('./EmiPlan');
 const EmiInstallment = require('./EmiInstallment');
 const AppSettings = require('./AppSettings');
 const Enquiry = require('./Enquiry');
+const BookingForm = require('./BookingForm');
 
 // ---------- Associations ----------
 
@@ -75,6 +76,12 @@ Transaction.hasOne(EmiPlan, { foreignKey: 'transaction_id', as: 'emiPlan' });
 EmiInstallment.belongsTo(EmiPlan, { foreignKey: 'emi_plan_id', as: 'emiPlan' });
 EmiPlan.hasMany(EmiInstallment, { foreignKey: 'emi_plan_id', as: 'installments' });
 
+// BookingForm relations
+BookingForm.belongsTo(User, { foreignKey: 'associate_id', as: 'associate' });
+User.hasMany(BookingForm, { foreignKey: 'associate_id', as: 'submittedForms' });
+
+BookingForm.belongsTo(User, { foreignKey: 'approved_by', as: 'approver' });
+
 module.exports = {
   sequelize,
   User,
@@ -93,5 +100,6 @@ module.exports = {
   EmiPlan,
   EmiInstallment,
   AppSettings,
-  Enquiry
+  Enquiry,
+  BookingForm
 };
