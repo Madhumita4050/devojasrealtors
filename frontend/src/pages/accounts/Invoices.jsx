@@ -9,7 +9,8 @@ const Invoices = () => {
   const [selected, setSelected] = useState(null);
   const [showManualForm, setShowManualForm] = useState(false);
   const [manualForm, setManualForm] = useState({
-    name: '', phone: '', address: '', particulars: '', amount: '', paymentMode: 'Cash'
+    name: '', phone: '', address: '', project: '', property: '',
+    paymentType: 'Booking', amount: '', paymentMode: 'Cash', txNo: '', particulars: ''
   });
 
   useEffect(() => {
@@ -29,144 +30,155 @@ const Invoices = () => {
     e.preventDefault();
     printManualReceipt(manualForm);
     setShowManualForm(false);
-    setManualForm({ name: '', phone: '', address: '', particulars: '', amount: '', paymentMode: 'Cash' });
+    setManualForm({ 
+      name: '', phone: '', address: '', project: '', property: '',
+      paymentType: 'Booking', amount: '', paymentMode: 'Cash', txNo: '', particulars: '' 
+    });
   };
 
   const printManualReceipt = (form) => {
     const win = window.open('', '_blank', 'width=900,height=1100');
+    const receiptNo = `REC-${Math.floor(10000 + Math.random() * 90000)}`;
+    const date = new Date().toLocaleDateString('en-IN');
+    const time = new Date().toLocaleTimeString('en-IN');
+    
+    // Receipt Template for Customer / Office Copy
+    const getReceiptHTML = (copyType) => `
+      <div class="receipt-card">
+        <div class="copy-badge">${copyType}</div>
+        <div class="company-header">
+          <img src="${window.location.origin}/logo.png" class="company-logo" alt="Logo" onerror="this.style.display='none'" />
+          <div class="company-info">
+            <h1>DEVOJAS REALTORS</h1>
+            <p>123, Real Estate Avenue, Business Park, Varanasi, UP</p>
+            <p>Phone: +91 9999000000 | Email: info@devojasrealtors.in</p>
+          </div>
+        </div>
+        
+        <div class="meta-row">
+          <div class="meta-item"><span>Receipt No:</span> <strong>${receiptNo}</strong></div>
+          <div class="meta-item"><span>Date:</span> <strong>${date} ${time}</strong></div>
+        </div>
+
+        <div class="grid-2">
+          <div class="box">
+            <div class="box-title">Customer Information</div>
+            <div class="box-content">
+              <div class="row"><div class="label">Name:</div><div class="val">${form.name}</div></div>
+              <div class="row"><div class="label">Mobile:</div><div class="val">${form.phone}</div></div>
+              <div class="row"><div class="label">Address:</div><div class="val">${form.address || '—'}</div></div>
+            </div>
+          </div>
+          <div class="box">
+            <div class="box-title">Property Information</div>
+            <div class="box-content">
+              <div class="row"><div class="label">Project:</div><div class="val">${form.project || '—'}</div></div>
+              <div class="row"><div class="label">Property / Unit:</div><div class="val">${form.property || '—'}</div></div>
+              <div class="row"><div class="label">Payment Type:</div><div class="val">${form.paymentType}</div></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="payment-section">
+          <div class="payment-title">Payment Details</div>
+          <div class="payment-content">
+            <div class="pay-row">
+              <div class="pay-label">Payment Mode</div>
+              <div class="pay-val">${form.paymentMode} ${form.txNo ? `(Ref: ${form.txNo})` : ''}</div>
+            </div>
+            <div class="pay-row">
+              <div class="pay-label">Particulars / Note</div>
+              <div class="pay-val" style="font-weight:500;">${form.particulars || '—'}</div>
+            </div>
+            <div class="pay-row amount-row">
+              <div class="pay-label">Total Amount Received</div>
+              <div class="pay-val text-blue">₹ ${Number(form.amount).toLocaleString('en-IN', {minimumFractionDigits: 2})}</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="amount-words">
+          <strong>Amount in Words:</strong> Rupees ${Number(form.amount).toLocaleString('en-IN')} Only.
+        </div>
+        
+        <div class="sig-area">
+          <div class="sig-box">
+            <div class="sig-line"></div>
+            <div class="sig-text">Customer Signature</div>
+          </div>
+          <div class="sig-box">
+            <div class="sig-line"></div>
+            <div class="sig-text">Cashier / Accounts</div>
+          </div>
+          <div class="sig-box">
+            <div class="sig-line"></div>
+            <div class="sig-text">Authorised Signatory</div>
+          </div>
+        </div>
+        <div class="footer-note">* Subject to realization of cheque / online transfer. This is a computer generated receipt.</div>
+      </div>
+    `;
+
     win.document.write(`<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Official Receipt — ${form.name}</title>
+<title>Advanced Receipt — ${form.name}</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Roboto', Arial, sans-serif; background: #fff; color: #222; font-size: 13px; }
-  .page { width: 794px; margin: 0 auto; padding: 40px; background: #fff; position: relative; }
+  body { font-family: 'Inter', sans-serif; background: #e2e8f0; color: #1e293b; font-size: 11px; padding: 20px; display: flex; flex-direction: column; gap: 20px; align-items: center; }
   
-  /* ── Header ── */
-  .company-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 4px solid #1e3a8a; padding-bottom: 15px; margin-bottom: 25px; }
-  .company-logo { height: 75px; object-fit: contain; }
-  .company-info { text-align: right; }
-  .company-info h1 { font-size: 26px; font-weight: 900; color: #1e3a8a; letter-spacing: 1px; margin-bottom: 4px; }
-  .company-info p { font-size: 11px; color: #555; line-height: 1.4; }
+  .receipt-card { width: 794px; background: #fff; padding: 30px 40px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); position: relative; border-top: 6px solid #1e3a8a; }
+  .copy-badge { position: absolute; top: 15px; right: 40px; border: 1px solid #1e3a8a; color: #1e3a8a; font-size: 10px; font-weight: 700; padding: 4px 12px; letter-spacing: 1px; text-transform: uppercase; border-radius: 20px; }
   
-  .receipt-title { text-align: center; background: #1e3a8a; color: #fff; font-size: 18px; font-weight: 800; padding: 8px 0; letter-spacing: 2px; margin-bottom: 25px; border-radius: 4px; }
+  .company-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 15px; }
+  .company-logo { height: 50px; object-fit: contain; }
+  .company-info h1 { font-size: 22px; font-weight: 800; color: #1e3a8a; letter-spacing: 0.5px; }
+  .company-info p { font-size: 10px; color: #64748b; margin-top: 2px; }
   
-  /* ── Details Grid ── */
-  .grid-2 { display: flex; gap: 20px; margin-bottom: 25px; }
-  .box { flex: 1; border: 2px solid #bfdbfe; border-radius: 6px; overflow: hidden; }
-  .box-title { background: #eff6ff; color: #1e3a8a; font-weight: 700; padding: 8px 12px; font-size: 12px; border-bottom: 2px solid #bfdbfe; text-transform: uppercase; letter-spacing: 1px; }
+  .meta-row { display: flex; justify-content: space-between; background: #f8fafc; padding: 10px 15px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
+  .meta-item { font-size: 11px; color: #475569; }
+  .meta-item strong { color: #0f172a; font-size: 12px; margin-left: 4px; }
+  
+  .grid-2 { display: flex; gap: 20px; margin-bottom: 20px; }
+  .box { flex: 1; border: 1px solid #cbd5e1; border-radius: 6px; overflow: hidden; }
+  .box-title { background: #f1f5f9; color: #334155; font-weight: 700; padding: 8px 12px; font-size: 11px; border-bottom: 1px solid #cbd5e1; text-transform: uppercase; letter-spacing: 0.5px; }
   .box-content { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
-  .row { display: flex; align-items: flex-end; }
-  .label { font-size: 11px; color: #555; font-weight: 600; width: 120px; text-transform: uppercase; }
-  .val { flex: 1; font-weight: 700; font-size: 13px; border-bottom: 1px dashed #94a3b8; padding-bottom: 2px; color: #0f172a; }
+  .row { display: flex; align-items: baseline; }
+  .label { font-size: 10px; color: #64748b; font-weight: 600; width: 100px; text-transform: uppercase; }
+  .val { flex: 1; font-weight: 600; font-size: 12px; color: #0f172a; border-bottom: 1px dashed #cbd5e1; padding-bottom: 2px; }
   
-  /* ── Payment Details ── */
-  .payment-section { border: 2px solid #1e3a8a; border-radius: 6px; margin-bottom: 25px; overflow: hidden; }
-  .payment-title { background: #1e3a8a; color: #fff; font-weight: 700; padding: 8px 12px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
-  .payment-content { padding: 16px; background: #f8fafc; }
-  
-  .pay-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+  .payment-section { border: 1px solid #1e3a8a; border-radius: 6px; overflow: hidden; margin-bottom: 15px; }
+  .payment-title { background: #1e3a8a; color: #fff; font-weight: 600; padding: 8px 15px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+  .payment-content { padding: 0 15px; background: #fff; }
+  .pay-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
   .pay-row:last-child { border-bottom: none; }
-  .pay-label { color: #475569; font-weight: 500; }
-  .pay-val { font-weight: 800; color: #1e3a8a; font-size: 16px; }
+  .pay-label { color: #475569; font-weight: 500; font-size: 12px; }
+  .pay-val { font-weight: 700; color: #0f172a; font-size: 13px; text-align: right; }
+  .amount-row { border-top: 2px dashed #cbd5e1 !important; padding-top: 15px; margin-top: 5px; }
+  .amount-row .pay-label { font-size: 14px; font-weight: 700; color: #0f172a; }
+  .text-blue { color: #1e3a8a !important; font-size: 20px !important; }
   
-  /* ── Signatures ── */
-  .sig-area { display: flex; justify-content: space-between; margin-top: 60px; padding: 0 20px; }
-  .sig-box { text-align: center; width: 200px; }
-  .sig-line { border-bottom: 2px solid #1e293b; height: 40px; margin-bottom: 8px; }
-  .sig-text { font-size: 12px; font-weight: 700; color: #334155; text-transform: uppercase; }
+  .amount-words { background: #eff6ff; padding: 10px 15px; border-radius: 4px; border: 1px dashed #bfdbfe; font-size: 11px; color: #1e3a8a; margin-bottom: 40px; }
   
-  /* ── Footer ── */
-  .footer { margin-top: 40px; text-align: center; font-size: 10px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 12px; }
+  .sig-area { display: flex; justify-content: space-between; padding: 0 10px; margin-bottom: 20px; }
+  .sig-box { text-align: center; width: 160px; }
+  .sig-line { border-bottom: 1px solid #475569; height: 30px; margin-bottom: 8px; }
+  .sig-text { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; }
+  
+  .footer-note { text-align: center; font-size: 9px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 10px; }
   
   @media print {
-    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .page { padding: 20px; width: 100%; }
+    body { background: #fff; padding: 0; display: block; }
+    .receipt-card { width: 100%; box-shadow: none; border-top: none; padding: 20px; page-break-after: always; }
+    .receipt-card:last-child { page-break-after: auto; }
   }
 </style>
 </head>
 <body>
-  <div class="page">
-    
-    <!-- Header -->
-    <div class="company-header">
-      <img src="${window.location.origin}/logo.png" class="company-logo" alt="Logo" onerror="this.style.display='none'" />
-      <div class="company-info">
-        <h1>DEVOJAS REALTORS</h1>
-        <p>123, Real Estate Avenue, Business Park, Varanasi, UP</p>
-        <p>Phone: +91 9999000000 | Email: info@devojasrealtors.in</p>
-      </div>
-    </div>
-    
-    <div class="receipt-title">OFFICIAL PAYMENT RECEIPT</div>
-    
-    <div class="grid-2">
-      <!-- Customer Info -->
-      <div class="box">
-        <div class="box-title">Received From (Customer Details)</div>
-        <div class="box-content">
-          <div class="row"><div class="label">Name:</div><div class="val">${form.name}</div></div>
-          <div class="row"><div class="label">Phone:</div><div class="val">${form.phone}</div></div>
-          <div class="row"><div class="label">Address:</div><div class="val">${form.address || '—'}</div></div>
-        </div>
-      </div>
-      
-      <!-- Receipt Info -->
-      <div class="box">
-        <div class="box-title">Receipt Information</div>
-        <div class="box-content">
-          <div class="row"><div class="label">Receipt No:</div><div class="val">REC-${Math.floor(10000 + Math.random() * 90000)}</div></div>
-          <div class="row"><div class="label">Date:</div><div class="val">${new Date().toLocaleDateString('en-IN')}</div></div>
-          <div class="row"><div class="label">Generated By:</div><div class="val">Accounts Department</div></div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Payment Box -->
-    <div class="payment-section">
-      <div class="payment-title">Payment Particulars</div>
-      <div class="payment-content">
-        <div class="pay-row">
-          <div class="pay-label">Property Details / Description</div>
-          <div class="pay-val" style="font-size:14px;">${form.particulars}</div>
-        </div>
-        <div class="pay-row">
-          <div class="pay-label">Mode of Payment</div>
-          <div class="pay-val" style="font-size:14px;">${form.paymentMode}</div>
-        </div>
-        <div class="pay-row" style="margin-top:10px; padding-top:16px; border-top: 2px dashed #cbd5e1;">
-          <div class="pay-label" style="font-size:16px; color:#0f172a; font-weight:700;">Total Amount Received</div>
-          <div class="pay-val" style="font-size:22px;">₹ ${Number(form.amount).toLocaleString('en-IN')}</div>
-        </div>
-      </div>
-    </div>
-    
-    <p style="font-size:11px; color:#64748b; font-style:italic; margin-bottom:40px;">* Sum of Rupees ${Number(form.amount).toLocaleString('en-IN')} only. Subject to realization of cheque/online transfer.</p>
-    
-    <!-- Signatures -->
-    <div class="sig-area">
-      <div class="sig-box">
-        <div class="sig-line"></div>
-        <div class="sig-text">Customer Signature</div>
-      </div>
-      <div class="sig-box">
-        <div class="sig-line"></div>
-        <div class="sig-text">Accounts Department</div>
-      </div>
-      <div class="sig-box">
-        <div class="sig-line"></div>
-        <div class="sig-text">Authorised Signatory</div>
-      </div>
-    </div>
-    
-    <div class="footer">
-      This is a computer-generated receipt from Devojas Realtors. Valid only with authorised signature.
-    </div>
-    
-  </div>
+  ${getReceiptHTML('Office Copy')}
+  ${getReceiptHTML('Customer Copy')}
   <script>window.onload = function(){ window.print(); }</script>
 </body>
 </html>`);
@@ -287,7 +299,7 @@ const Invoices = () => {
       </Modal>
 
       {/* Manual Custom Receipt Modal */}
-      <Modal title="Generate Custom Receipt" isOpen={showManualForm} onClose={() => setShowManualForm(false)}>
+      <Modal title="Generate Advanced Receipt" isOpen={showManualForm} onClose={() => setShowManualForm(false)}>
         <form onSubmit={handleManualSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -295,7 +307,7 @@ const Invoices = () => {
               <input required type="text" className="input-field" value={manualForm.name} onChange={e => setManualForm({...manualForm, name: e.target.value})} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Mobile No *</label>
               <input required type="text" className="input-field" value={manualForm.phone} onChange={e => setManualForm({...manualForm, phone: e.target.value})} />
             </div>
           </div>
@@ -303,27 +315,62 @@ const Invoices = () => {
             <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
             <input type="text" className="input-field" value={manualForm.address} onChange={e => setManualForm({...manualForm, address: e.target.value})} />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Particulars / Property Details *</label>
-            <input required type="text" className="input-field" placeholder="e.g. Advance booking for Plot 12" value={manualForm.particulars} onChange={e => setManualForm({...manualForm, particulars: e.target.value})} />
+          
+          <div className="border-t border-gray-200 pt-3">
+            <h4 className="text-sm font-bold text-navy mb-3">Property Information</h4>
+            <div className="grid grid-cols-2 gap-4 mb-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Project Name</label>
+                <input type="text" className="input-field" placeholder="e.g. Devojas City" value={manualForm.project} onChange={e => setManualForm({...manualForm, project: e.target.value})} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Property / Unit</label>
+                <input type="text" className="input-field" placeholder="e.g. Plot No. 12" value={manualForm.property} onChange={e => setManualForm({...manualForm, property: e.target.value})} />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Payment Type *</label>
+                <select className="input-field" value={manualForm.paymentType} onChange={e => setManualForm({...manualForm, paymentType: e.target.value})}>
+                  <option>Booking</option>
+                  <option>Installment (EMI)</option>
+                  <option>Maintenance</option>
+                  <option>Registration</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Particulars / Note</label>
+                <input type="text" className="input-field" placeholder="Optional details..." value={manualForm.particulars} onChange={e => setManualForm({...manualForm, particulars: e.target.value})} />
+              </div>
+            </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
+
+          <div className="border-t border-gray-200 pt-3">
+            <h4 className="text-sm font-bold text-navy mb-3">Payment Details</h4>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Payment Mode *</label>
+                <select className="input-field" value={manualForm.paymentMode} onChange={e => setManualForm({...manualForm, paymentMode: e.target.value})}>
+                  <option>Cash</option>
+                  <option>UPI</option>
+                  <option>Bank Transfer (NEFT/RTGS)</option>
+                  <option>Cheque</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Txn / Cheque No</label>
+                <input type="text" className="input-field" placeholder="If applicable" value={manualForm.txNo} onChange={e => setManualForm({...manualForm, txNo: e.target.value})} />
+              </div>
+            </div>
+            <div className="mt-3">
               <label className="block text-sm font-medium text-gray-700 mb-1">Amount Received (₹) *</label>
-              <input required type="number" className="input-field" value={manualForm.amount} onChange={e => setManualForm({...manualForm, amount: e.target.value})} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Payment Mode</label>
-              <select className="input-field" value={manualForm.paymentMode} onChange={e => setManualForm({...manualForm, paymentMode: e.target.value})}>
-                <option>Cash</option>
-                <option>Bank Transfer (NEFT/RTGS)</option>
-                <option>UPI</option>
-                <option>Cheque</option>
-              </select>
+              <input required type="number" className="input-field text-lg font-bold text-blue-700" value={manualForm.amount} onChange={e => setManualForm({...manualForm, amount: e.target.value})} />
             </div>
           </div>
+
           <button type="submit" className="btn-primary w-full flex items-center justify-center gap-2 mt-2">
-            <Printer size={18} /> Generate & Print PDF
+            <Printer size={18} /> Generate Advanced Receipt
           </button>
         </form>
       </Modal>
