@@ -59,6 +59,7 @@ import AllWallets from './pages/accounts/AllWallets';
 import ExportData from './pages/accounts/ExportData';
 import AccountsSupport from './pages/accounts/Support';
 import AccountsBookingForms from './pages/accounts/BookingForms';
+import DailyRecords from './pages/accounts/DailyRecords';
 
 function App() {
   return (
@@ -90,6 +91,7 @@ function App() {
             <Route path="/network" element={<MyTeamNetworkAdmin />} />
             <Route path="/payments" element={<PaymentsAndReceipts />} />
             <Route path="/booking-forms" element={<AdminBookingForms />} />
+            <Route path="/daily-records" element={<DailyRecords />} />
           </Route>
 
           {/* ---------- CLIENT PANEL (new) ---------- */}
@@ -151,6 +153,7 @@ function App() {
             <Route path="/accounts/export" element={<ExportData />} />
             <Route path="/accounts/support" element={<AccountsSupport />} />
             <Route path="/accounts/booking-forms" element={<AccountsBookingForms />} />
+            <Route path="/accounts/daily-records" element={<DailyRecords />} />
           </Route>
         </Routes>
       </AuthProvider>

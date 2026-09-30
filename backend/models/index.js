@@ -18,6 +18,7 @@ const AppSettings = require('./AppSettings');
 const Enquiry = require('./Enquiry');
 const BookingForm = require('./BookingForm');
 const PayoutStatement = require('./PayoutStatement');
+const DailyRecord = require('./DailyRecord');
 
 // ---------- Associations ----------
 
@@ -89,6 +90,11 @@ User.hasMany(PayoutStatement, { foreignKey: 'associate_id', as: 'payoutStatement
 PayoutStatement.belongsTo(User, { foreignKey: 'created_by', as: 'creator' });
 PayoutStatement.belongsTo(require('./Slab'), { foreignKey: 'slab_id', as: 'slab' });
 
+// DailyRecord relations
+DailyRecord.belongsTo(User, { foreignKey: 'created_by', as: 'creator' });
+DailyRecord.belongsTo(User, { foreignKey: 'updated_by', as: 'updater' });
+User.hasMany(DailyRecord, { foreignKey: 'created_by', as: 'dailyRecords' });
+
 module.exports = {
   sequelize,
   User,
@@ -109,5 +115,6 @@ module.exports = {
   AppSettings,
   Enquiry,
   BookingForm,
-  PayoutStatement
+  PayoutStatement,
+  DailyRecord
 };

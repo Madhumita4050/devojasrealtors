@@ -48,7 +48,13 @@ const Sidebar = ({ collapsed }) => {
       ]
     },
     { title: "Transactions", icon: Receipt, path: "/transactions" },
-    { title: "Payments & Receipts", icon: Receipt, path: "/payments" },
+    {
+      title: "Accounts", icon: Receipt, path: "/accounts-menu",
+      sub: [
+        { title: "Daily Records", path: "/daily-records" },
+        { title: "Payments & Receipts", path: "/payments" }
+      ]
+    },
     { title: "Booking Forms", icon: FileText, path: "/booking-forms" },
     {
       title: "Commission / Payroll", icon: Percent, path: "/commissions",

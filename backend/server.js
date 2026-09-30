@@ -32,6 +32,7 @@ const enquiryRoutes = require('./routes/enquiryRoutes'); // NEW: Website enquiri
 const bookingFormRoutes = require('./routes/bookingFormRoutes');
 const payoutStatementRoutes = require('./routes/payoutStatementRoutes');
 const uploadRoutes = require('./routes/uploadRoutes'); // NEW: Generic file upload (e.g. company logo)
+const dailyRecordRoutes = require('./routes/dailyRecordRoutes');
 
 const app = express();
 
@@ -85,6 +86,7 @@ app.use('/api/enquiries', enquiryRoutes); // NEW: Website enquiries (admin view)
 app.use('/api/booking-forms', bookingFormRoutes);
 app.use('/api/payout-statements', payoutStatementRoutes);
 app.use('/api/upload', uploadRoutes); // NEW: Generic file upload (company logo, etc.)
+app.use('/api/daily-records', dailyRecordRoutes); // NEW: Accounts Daily Records
 app.use('/uploads', express.static(require('path').join(__dirname, 'uploads'))); // NEW: serve uploaded logo/PDF files
 
 // ---------- PRODUCTION: Serve frontend build (if present) ----------

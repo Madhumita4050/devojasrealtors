@@ -8,6 +8,7 @@ const menuItems = [
   { title: 'Dashboard', icon: LayoutDashboard, path: '/accounts' },
   { title: 'Booking Forms', icon: ClipboardCheck, path: '/accounts/booking-forms' },
   { title: 'Payment Verification', icon: CreditCard, path: '/accounts/payments' },
+  { title: 'Daily Records', icon: FileText, path: '/accounts/daily-records' },
   { title: 'Payout Management', icon: Send, path: '/accounts/payouts' },
   { title: 'Invoices & Receipts', icon: FileText, path: '/accounts/invoices' },
   { title: 'Financial Reports', icon: BarChart3, path: '/accounts/reports' },
