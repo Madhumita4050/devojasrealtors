@@ -47,7 +47,7 @@ export default function Gallery() {
 
       </section>
 
-      {/* RERA and Construction Guidelines */}
+      {/* Construction Guidelines */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-brand-navy text-white rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-brand-navyLight to-brand-navy opacity-95" />

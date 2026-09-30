@@ -71,7 +71,7 @@ export default function RefundCancellation() {
               <p><strong>Devojas Realtors Pvt. Ltd.</strong></p>
               <p>Corporate Office: B29, VDA Colony, Badalalpur, Chandmari, Varanasi - 221002, India</p>
               <p>Managing Director: Piyush Kumar Singh</p>
-              <p>Email: devojasrealtors@gmail.com</p>
+              <p>Email: info@devojasrealtors.in</p>
               <p>Phone: +91 9278317284</p>
             </div>
           </div>

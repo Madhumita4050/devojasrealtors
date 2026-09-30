@@ -5,12 +5,11 @@ export const projectsData = [
     tagline: "Varanasi's Premier Residential Township Project",
     location: 'Kaithi Toll Plaza & Markandeya Mahadev Corridor, Bhandaha Kalan, Ghazipur Road, Varanasi',
     description: 'Devojas City is a state-of-the-art residential plot development project offering premium plots of sizes 1000 SF and 1600 SF. Located along the main Ghazipur-Varanasi Highway (NH) right near Kaithi Toll Plaza and 3.5 KM from Markandeya Mahadev Mandir, the project features robust infrastructure, secure gated boundaries, and close proximity to holy temples and schools.',
-    sizes: ['1000 SF', '1500 SF'],
+    sizes: ['1000 SF', '1600 SF'],
     roads: ['25 Ft', '30 Ft', '40 Ft'],
     priceLabel: '₹1500 / Sq.Ft.',
     imageUrl: '/assets/layout_plan.png',
     pdfUrl: '/assets/devojas_city_layout.pdf',
-    reraApproved: true,
     stats: {
       totalPlots: 72,
       soldPlots: 48,
@@ -78,7 +77,6 @@ export const projectsData = [
     priceLabel: 'Starting from ₹14.5 Lacs*',
     imageUrl: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=800&auto=format&fit=crop',
     pdfUrl: '/assets/devojas_city_layout.pdf',
-    reraApproved: true,
     stats: {
       totalPlots: 45,
       soldPlots: 32,

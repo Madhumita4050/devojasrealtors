@@ -69,7 +69,7 @@ export default function CookiesPolicy() {
             <div className="bg-gray-50 border border-gray-150 p-4 rounded-xl text-xs space-y-1 text-gray-700 mt-3">
               <p><strong>Devojas Realtors Pvt. Ltd.</strong></p>
               <p>Corporate Office: B29, VDA Colony, Badalalpur, Chandmari, Varanasi - 221002, India</p>
-              <p>Email: devojasrealtors@gmail.com</p>
+              <p>Email: info@devojasrealtors.in</p>
             </div>
           </div>
 

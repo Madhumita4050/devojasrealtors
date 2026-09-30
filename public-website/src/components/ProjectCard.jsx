@@ -20,7 +20,6 @@ export default function ProjectCard({ project, onSelectPlotForEnquiry }) {
     landmarks = [],
     imageUrl,
     pdfUrl,
-    reraApproved,
     stats = { totalPlots: 0, soldPlots: 0, bookedPlots: 0, availablePlots: 0 },
     plots = []
   } = project;
@@ -79,11 +78,7 @@ export default function ProjectCard({ project, onSelectPlotForEnquiry }) {
 
           {/* RERA Badge & Immediate Registry Tag */}
           <div className="relative top-4 left-4 flex flex-col gap-2 z-10 self-start">
-            {reraApproved && (
-              <span className="bg-green-600 text-white font-bold text-[10px] uppercase tracking-wider px-3 py-1 rounded-md shadow-md backdrop-blur-sm">
-                RERA Compliant
-              </span>
-            )}
+
             <span className="bg-brand-navy/90 text-brand-gold font-bold text-[10px] uppercase tracking-wider px-3 py-1 rounded-md shadow-md border border-brand-gold/30 backdrop-blur-sm">
               Immediate Registry
             </span>

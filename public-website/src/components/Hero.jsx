@@ -3,11 +3,6 @@ import { ArrowRight, Leaf, MapPin, ShieldCheck, TrendingUp } from 'lucide-react'
 
 const trustPoints = [
   {
-    icon: ShieldCheck,
-    title: 'RERA Approved',
-    subtitle: 'Safe Investment',
-  },
-  {
     icon: MapPin,
     title: 'Prime Locations',
     subtitle: 'Better Connectivity',

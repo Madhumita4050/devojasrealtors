@@ -389,9 +389,9 @@ export default function About() {
         <div className="bg-brand-navy text-white rounded-3xl p-8 sm:p-12 text-center space-y-6 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-brand-navyLight to-brand-navy opacity-90" />
           <div className="relative z-10 max-w-2xl mx-auto space-y-4">
-            <h3 className="text-2xl sm:text-3xl font-bold font-serif text-brand-gold">RERA Registered Developers</h3>
+            <h3 className="text-2xl sm:text-3xl font-bold font-serif text-brand-gold">Trusted Developers</h3>
             <p className="text-sm text-white/70 leading-relaxed">
-              We comply with the Real Estate Regulatory Authority standards. All plot sizes, layout dimensions, and road allocations are submitted and verified under government guidelines.
+              We strictly adhere to all legal requirements for residential plotting. All plot sizes, layout dimensions, and road allocations are meticulously verified.
             </p>
             <div className="pt-2 flex flex-wrap justify-center gap-6">
               <span className="flex items-center space-x-2 text-xs font-semibold">

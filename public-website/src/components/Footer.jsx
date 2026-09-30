@@ -111,7 +111,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-brand-gold shrink-0" />
-                <a href="mailto:devojasrealtors@gmail.com" className="hover:text-brand-gold transition-colors">devojasrealtors@gmail.com</a>
+                <a href="mailto:info@devojasrealtors.in" className="hover:text-brand-gold transition-colors">info@devojasrealtors.in</a>
               </li>
             </ul>
           </div>

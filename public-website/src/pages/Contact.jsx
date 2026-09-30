@@ -61,8 +61,8 @@ export default function Contact() {
                 </div>
                 <div>
                   <span className="block text-xs text-gray-400 font-bold uppercase tracking-wider">Email Support</span>
-                  <a href="mailto:devojasrealtors@gmail.com" className="text-brand-navy font-semibold text-sm block mt-1 hover:underline">
-                    devojasrealtors@gmail.com
+                  <a href="mailto:info@devojasrealtors.in" className="text-brand-navy font-semibold text-sm block mt-1 hover:underline">
+                    info@devojasrealtors.in
                   </a>
                 </div>
               </div>

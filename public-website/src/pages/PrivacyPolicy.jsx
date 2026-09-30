@@ -72,7 +72,7 @@ export default function PrivacyPolicy() {
               <p><strong>Devojas Realtors Pvt. Ltd.</strong></p>
               <p>Corporate Office: B29, VDA Colony, Badalalpur, Chandmari, Varanasi - 221002, India</p>
               <p>Managing Director: Piyush Kumar Singh</p>
-              <p>Email: devojasrealtors@gmail.com</p>
+              <p>Email: info@devojasrealtors.in</p>
             </div>
           </div>
 

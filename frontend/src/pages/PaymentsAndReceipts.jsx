@@ -189,96 +189,134 @@ const PaymentsAndReceipts = () => {
       </Modal>
 
       {/* Receipt Modal */}
-      <Modal title="Receipt" isOpen={!!receiptModal} onClose={() => setReceiptModal(null)} size="lg">
+      <Modal title="Payment Receipt" isOpen={!!receiptModal} onClose={() => setReceiptModal(null)} size="2xl">
         {receiptModal && (
-          <div>
-            <div className="space-y-6 text-sm">
-              <div className="flex items-center justify-between border-b pb-4">
-                <div className="flex items-center gap-3">
-                  {receiptModal.companySettings?.company_logo_url && (
-                    <img src={receiptModal.companySettings.company_logo_url} alt="logo" className="w-12 h-12 object-contain" />
-                  )}
-                  <div>
-                    <h2 className="text-xl font-bold text-navy">{receiptModal.companySettings?.company_name || 'DEVOJAS REALTORS'}</h2>
-                    <p className="text-gray-400 text-xs">Payment Receipt</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="font-mono font-semibold">#RCPT-{String(receiptModal.id).padStart(5, '0')}</p>
-                  <p className="text-gray-400 text-xs">{new Date(receiptModal.deal_date || receiptModal.createdAt).toLocaleDateString('en-IN')}</p>
+          <div className="receipt-container bg-white text-gray-800">
+            {/* Header Section */}
+            <div className="flex justify-between items-start border-b-2 border-navy pb-6 mb-6">
+              <div className="flex items-center gap-4">
+                {receiptModal.companySettings?.company_logo_url ? (
+                  <img src={receiptModal.companySettings.company_logo_url} alt="Company Logo" className="w-16 h-16 object-contain" />
+                ) : (
+                  <div className="w-16 h-16 bg-navy text-white flex items-center justify-center font-bold text-xl rounded">LOGO</div>
+                )}
+                <div>
+                  <h1 className="text-2xl font-bold text-navy uppercase tracking-widest">{receiptModal.companySettings?.company_name || 'DEVOJAS REALTORS'}</h1>
+                  <p className="text-xs text-gray-500 mt-1">123, Real Estate Avenue, Business Park, Varanasi, UP</p>
+                  <p className="text-xs text-gray-500">Phone: +91 9999000000 | Email: contact@devojas.com</p>
                 </div>
               </div>
-
-              <div className="grid grid-cols-2 gap-4">
+              <div className="text-right flex flex-col justify-between h-full">
+                <div className="bg-navy text-white px-4 py-1 inline-block text-lg font-bold tracking-widest rounded-l-md self-end mb-2">RECEIPT</div>
                 <div>
-                  <p className="text-xs text-gray-400 uppercase">Buyer</p>
-                  <p className="font-medium">{receiptModal.buyer?.name}</p>
-                  <p className="text-gray-500 text-xs">{receiptModal.buyer?.phone}</p>
-                  {receiptModal.buyer?.pan_number && <p className="text-gray-500 text-xs">PAN: {receiptModal.buyer.pan_number}</p>}
-                  {receiptModal.buyer?.aadhar_number && <p className="text-gray-500 text-xs">Aadhar: {receiptModal.buyer.aadhar_number}</p>}
-                </div>
-                <div>
-                  <p className="text-xs text-gray-400 uppercase">Associate</p>
-                  <p className="font-medium">{receiptModal.sellerAssociate?.name || receiptModal.buyerAssociate?.name || '—'}</p>
+                  <p className="text-sm font-semibold">Receipt No: <span className="text-navy font-mono">REC-2026-{String(receiptModal.id).padStart(4, '0')}</span></p>
+                  <p className="text-sm">Date: <span className="font-semibold">{new Date(receiptModal.deal_date || receiptModal.createdAt).toLocaleDateString('en-IN')}</span></p>
                 </div>
               </div>
-
-              <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-xs text-gray-400 uppercase mb-1">Property</p>
-                <p className="font-semibold text-gray-800">{receiptModal.plot?.title}</p>
-                <p className="text-gray-500 text-xs">{receiptModal.plot?.location}</p>
-              </div>
-
-              <div className="grid grid-cols-3 gap-3 border-y py-3 text-center">
-                <div>
-                  <p className="text-xs text-gray-400">Total</p>
-                  <p className="font-bold text-navy">₹{Number(receiptModal.amount).toLocaleString('en-IN')}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-400">Paid</p>
-                  <p className="font-bold text-emerald-600">₹{Number(receiptModal.paid_amount).toLocaleString('en-IN')}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-400">Pending</p>
-                  <p className="font-bold text-red-500">₹{Number(receiptModal.pending_amount).toLocaleString('en-IN')}</p>
-                </div>
-              </div>
-
-              {receiptModal.payments?.length > 0 && (
-                <div>
-                  <p className="text-xs text-gray-400 uppercase mb-2">Payment History</p>
-                  <div className="space-y-1">
-                    {receiptModal.payments.map((p) => (
-                      <div key={p.id} className="flex justify-between text-gray-600">
-                        <span>{new Date(p.paid_on).toLocaleDateString('en-IN')} {p.note ? `— ${p.note}` : ''}</span>
-                        <span>₹{Number(p.amount).toLocaleString('en-IN')}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {receiptModal.emiPlan?.installments?.length > 0 && (
-                <div>
-                  <p className="text-xs text-gray-400 uppercase mb-2">EMI Schedule</p>
-                  <div className="space-y-1">
-                    {receiptModal.emiPlan.installments.sort((a, b) => a.month_number - b.month_number).map((inst) => (
-                      <div key={inst.id} className="flex justify-between text-gray-600">
-                        <span>Month {inst.month_number} — {new Date(inst.due_date).toLocaleDateString('en-IN')}</span>
-                        <span>₹{Number(inst.amount).toLocaleString('en-IN')} ({inst.status})</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <p className="text-xs text-gray-400 text-center pt-4 border-t">Cash payment receipt — {receiptModal.companySettings?.company_name || 'DEVOJAS REALTORS'}</p>
             </div>
-            <button onClick={() => window.print()} className="btn-primary w-full mt-6 flex items-center justify-center gap-2 print:hidden">
-              <Printer size={16} /> Print / Save as PDF
-            </button>
+
+            <div className="grid grid-cols-2 gap-8 mb-6">
+              {/* Customer Details */}
+              <div>
+                <h3 className="text-sm font-bold text-navy border-b border-gray-300 pb-1 mb-3 uppercase tracking-wider">Customer Details</h3>
+                <div className="space-y-1.5 text-sm">
+                  <div className="flex"><span className="w-32 text-gray-500">Name:</span> <span className="font-semibold uppercase">{receiptModal.buyer?.name}</span></div>
+                  <div className="flex"><span className="w-32 text-gray-500">Client ID:</span> <span className="font-mono">{receiptModal.buyer?.login_id || 'N/A'}</span></div>
+                  <div className="flex"><span className="w-32 text-gray-500">Mobile:</span> <span>{receiptModal.buyer?.phone}</span></div>
+                  <div className="flex"><span className="w-32 text-gray-500">Email:</span> <span>{receiptModal.buyer?.email || 'N/A'}</span></div>
+                  <div className="flex"><span className="w-32 text-gray-500">Address:</span> <span className="truncate">{receiptModal.buyer?.address || 'N/A'}</span></div>
+                </div>
+              </div>
+
+              {/* Property Details */}
+              <div>
+                <h3 className="text-sm font-bold text-navy border-b border-gray-300 pb-1 mb-3 uppercase tracking-wider">Property Details</h3>
+                <div className="space-y-1.5 text-sm">
+                  <div className="flex"><span className="w-32 text-gray-500">Project / Plot:</span> <span className="font-semibold">{receiptModal.plot?.title}</span></div>
+                  <div className="flex"><span className="w-32 text-gray-500">Property Type:</span> <span>{receiptModal.plot?.type || 'Plot'}</span></div>
+                  <div className="flex"><span className="w-32 text-gray-500">Location:</span> <span>{receiptModal.plot?.location}</span></div>
+                  <div className="flex"><span className="w-32 text-gray-500">Associate:</span> <span>{receiptModal.sellerAssociate?.name || receiptModal.buyerAssociate?.name || '—'}</span></div>
+                  <div className="flex"><span className="w-32 text-gray-500">Booking No:</span> <span className="font-mono">BKG-{String(receiptModal.id).padStart(4, '0')}</span></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Payment Summary */}
+            <h3 className="text-sm font-bold text-navy border-b border-gray-300 pb-1 mb-3 uppercase tracking-wider">Payment Summary</h3>
+            <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden mb-6">
+              <table className="w-full text-sm">
+                <thead className="bg-gray-100 border-b border-gray-200">
+                  <tr>
+                    <th className="text-left py-2 px-4 font-semibold text-gray-700">Particulars</th>
+                    <th className="text-right py-2 px-4 font-semibold text-gray-700">Amount (INR)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  <tr>
+                    <td className="py-2 px-4 text-gray-600">Total Property Amount</td>
+                    <td className="py-2 px-4 text-right font-medium">₹ {Number(receiptModal.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 px-4 text-gray-600">Previous Amount Paid</td>
+                    <td className="py-2 px-4 text-right font-medium">₹ {Number(receiptModal.paid_amount - (receiptModal.payments?.[receiptModal.payments.length-1]?.amount || 0)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                  </tr>
+                  <tr className="bg-blue-50/50">
+                    <td className="py-2 px-4 font-semibold text-navy">This Payment Received</td>
+                    <td className="py-2 px-4 text-right font-bold text-navy">₹ {Number(receiptModal.payments?.[receiptModal.payments.length-1]?.amount || receiptModal.paid_amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 px-4 text-gray-600">Total Paid Till Date</td>
+                    <td className="py-2 px-4 text-right font-medium text-emerald-600">₹ {Number(receiptModal.paid_amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                  </tr>
+                  <tr className="bg-gray-100">
+                    <td className="py-2 px-4 font-semibold text-gray-700">Balance Amount</td>
+                    <td className="py-2 px-4 text-right font-bold text-red-600">₹ {Number(receiptModal.pending_amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Signatures */}
+            <div className="grid grid-cols-3 gap-4 pt-12 pb-4 text-center mt-12">
+              <div>
+                <div className="border-t border-gray-400 w-3/4 mx-auto pt-2">
+                  <p className="text-sm font-semibold text-gray-700">Prepared By</p>
+                  <p className="text-xs text-gray-500">Accounts Dept.</p>
+                </div>
+              </div>
+              <div>
+                <div className="border-t border-gray-400 w-3/4 mx-auto pt-2">
+                  <p className="text-sm font-semibold text-gray-700">Authorized Signatory</p>
+                  <p className="text-xs text-gray-500">{receiptModal.companySettings?.company_name || 'DEVOJAS REALTORS'}</p>
+                </div>
+              </div>
+              <div>
+                <div className="border-t border-gray-400 w-3/4 mx-auto pt-2">
+                  <p className="text-sm font-semibold text-gray-700">Customer Signature</p>
+                  <p className="text-xs text-gray-500">(Optional)</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-center text-xs text-gray-400 border-t pt-3 pb-2">
+              <p>This is a system generated receipt. Subject to realization of cheque / online transfer.</p>
+            </div>
+
+            <style>{`
+              @media print {
+                body * { visibility: hidden; }
+                .receipt-container, .receipt-container * { visibility: visible; }
+                .receipt-container { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; }
+                .print\\:hidden { display: none !important; }
+              }
+            `}</style>
           </div>
         )}
+        <div className="p-4 bg-gray-50 border-t flex justify-end print:hidden">
+          <button onClick={() => window.print()} className="bg-navy text-white px-6 py-2 rounded-lg font-medium shadow hover:bg-blue-900 transition flex items-center gap-2">
+            <Printer size={18} /> Download / Print Receipt
+          </button>
+        </div>
       </Modal>
     </div>
   );
