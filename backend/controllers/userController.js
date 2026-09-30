@@ -3,8 +3,7 @@ const { Op } = require('sequelize');
 const { User, Wallet, WalletTransaction } = require('../models');
 const generateReferralCode = require('../utils/generateReferralCode');
 const generatePassword = require('../utils/generatePassword');
-const { sendAssociateCredentials } = require('../services/emailService');
-const { sendWelcomeSMS } = require('../services/smsService');
+const { sendAssociateCredentials, sendCredentialsEmail } = require('../services/emailService');
 
 // @desc Get all users (filter by role via query ?role=client/associate)
 // @route GET /api/users
@@ -109,25 +108,18 @@ const createUser = async (req, res, next) => {
     await Wallet.create({ user_id: user.id, balance: 0 });
 
     let emailSent = false;
-    let smsSent = false;
-    if (isAssociate) {
-      const emailResult = await sendAssociateCredentials(user, plainPassword);
+    // Send credentials via email to all users (if they have email)
+    if (user.email) {
+      const emailResult = await sendCredentialsEmail(user, login_id, plainPassword);
       emailSent = !!(emailResult && emailResult.success && !emailResult.mock);
-    }
-    
-    // Send SMS with credentials
-    if (user.phone) {
-      const smsResult = await sendWelcomeSMS(user.phone, login_id, plainPassword);
-      smsSent = !!(smsResult && smsResult.success && !smsResult.mock);
     }
 
     const { password: _, ...userData } = user.toJSON();
     res.status(201).json({
       success: true,
       data: userData,
-      generatedPassword: isAssociate ? plainPassword : undefined,
-      emailSent,
-      smsSent
+      generatedPassword: plainPassword,
+      emailSent
     });
   } catch (error) {
     next(error);

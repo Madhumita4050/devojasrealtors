@@ -116,10 +116,10 @@ const Users = () => {
         setCreatedCreds({
           referral_code: res.data.data.referral_code,
           loginId: res.data.data.login_id || res.data.data.email || res.data.data.phone,
+          email: res.data.data.email,
           phone: res.data.data.phone,
           generatedPassword: res.data.generatedPassword || form.password || '123456',
           emailSent: res.data.emailSent || false,
-          smsSent: res.data.smsSent || false,
           role: res.data.data.role
         });
       }
@@ -543,18 +543,17 @@ const Users = () => {
             </div>
 
             <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className={`flex items-center gap-2 rounded-lg p-3 border ${ createdCreds.smsSent ? 'bg-green-50 border-green-200 text-green-700' : 'bg-amber-50 border-amber-200 text-amber-700' }`}>
-                <span className="text-xl">{createdCreds.smsSent ? '📱' : '⏳'}</span>
-                <div>
-                  <p className="font-semibold">{createdCreds.smsSent ? 'SMS Sent!' : 'SMS (Mock Mode)'}</p>
-                  <p className="text-xs">{createdCreds.smsSent ? `Credentials sent to ${createdCreds.phone}` : 'Configure SMS_API_KEY in .env to enable real SMS'}</p>
-                </div>
-              </div>
-              <div className={`flex items-center gap-2 rounded-lg p-3 border ${ createdCreds.emailSent ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-500' }`}>
-                <span className="text-xl">{createdCreds.emailSent ? '✉️' : '📧'}</span>
+              <div className={`flex items-center gap-2 rounded-lg p-3 border col-span-2 ${ createdCreds.emailSent ? 'bg-green-50 border-green-200 text-green-700' : 'bg-amber-50 border-amber-200 text-amber-700' }`}>
+                <span className="text-2xl">{createdCreds.emailSent ? '✉️' : '📧'}</span>
                 <div>
                   <p className="font-semibold">{createdCreds.emailSent ? 'Email Sent!' : 'Email (Mock Mode)'}</p>
-                  <p className="text-xs">{createdCreds.emailSent ? 'Credentials email delivered' : 'Configure SMTP in .env to enable'}</p>
+                  <p className="text-xs">
+                    {createdCreds.emailSent
+                      ? `Credentials email delivered to ${createdCreds.email}`
+                      : createdCreds.email
+                        ? `Email will be sent when SMTP is configured in .env`
+                        : `No email provided — please share credentials manually`}
+                  </p>
                 </div>
               </div>
             </div>
