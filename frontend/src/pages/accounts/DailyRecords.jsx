@@ -9,7 +9,9 @@ const DailyRecords = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [formData, setFormData] = useState({
-    id: null, title: '', description: '', type: 'income', amount: '', record_date: new Date().toISOString().split('T')[0]
+    id: null, title: '', description: '', type: 'income', amount: '',
+    record_date: new Date().toISOString().split('T')[0],
+    category: 'General', party_name: '', party_phone: '', payment_mode: 'Cash', reference_no: ''
   });
 
   const fetchRecords = async () => {
@@ -32,15 +34,22 @@ const DailyRecords = () => {
       setFormData({
         id: record.id,
         title: record.title,
-        description: record.description,
+        description: record.description || '',
         type: record.type,
         amount: record.amount,
-        record_date: record.record_date
+        record_date: record.record_date,
+        category: record.category || 'General',
+        party_name: record.party_name || '',
+        party_phone: record.party_phone || '',
+        payment_mode: record.payment_mode || 'Cash',
+        reference_no: record.reference_no || ''
       });
       setIsEdit(true);
     } else {
       setFormData({
-        id: null, title: '', description: '', type: 'income', amount: '', record_date: new Date().toISOString().split('T')[0]
+        id: null, title: '', description: '', type: 'income', amount: '',
+        record_date: new Date().toISOString().split('T')[0],
+        category: 'General', party_name: '', party_phone: '', payment_mode: 'Cash', reference_no: ''
       });
       setIsEdit(false);
     }
@@ -285,75 +294,137 @@ const DailyRecords = () => {
         )}
 
         <Modal
-          title={isEdit ? 'Edit Record' : 'New Record'}
+          title={isEdit ? 'Edit Record' : 'New Daily Record'}
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
         >
           <form onSubmit={handleSubmit} className="space-y-4">
+            
+            {/* Row 1: Title */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Title / Narration *</label>
               <input
-                type="text"
-                required
-                className="input-field"
+                type="text" required className="input-field"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="e.g. Office supplies, Booking advance"
+                placeholder="e.g. Office rent paid, Booking advance received"
               />
             </div>
-            
+
+            {/* Row 2: Type & Category */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
-                <select
-                  className="input-field"
-                  value={formData.type}
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                >
-                  <option value="income">Income</option>
-                  <option value="expense">Expense</option>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Type *</label>
+                <select className="input-field" value={formData.type} onChange={(e) => setFormData({ ...formData, type: e.target.value })}>
+                  <option value="income">Income (Credit)</option>
+                  <option value="expense">Expense (Debit)</option>
+                  <option value="other">Other</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
+                <select className="input-field" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })}>
+                  <option>General</option>
+                  <option>Booking Advance</option>
+                  <option>Plot Sale</option>
+                  <option>Registration Fees</option>
+                  <option>EMI / Installment</option>
+                  <option>Commission</option>
+                  <option>Office Rent</option>
+                  <option>Salary</option>
+                  <option>Maintenance</option>
+                  <option>Utilities</option>
+                  <option>Marketing</option>
+                  <option>Legal / Documentation</option>
+                  <option>Travel</option>
+                  <option>Other Expense</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Row 3: Amount & Date */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Amount (₹) *</label>
+                <div className="relative">
+                  <IndianRupee className="absolute left-3 top-3 text-gray-400" size={16} />
+                  <input
+                    type="number" required min="0" step="0.01" className="input-field pl-9"
+                    value={formData.amount}
+                    onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                    placeholder="0.00"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Date *</label>
                 <input
-                  type="date"
-                  required
-                  className="input-field"
+                  type="date" required className="input-field"
                   value={formData.record_date}
                   onChange={(e) => setFormData({ ...formData, record_date: e.target.value })}
                 />
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Amount</label>
-              <div className="relative">
-                <IndianRupee className="absolute left-3 top-3 text-gray-400" size={16} />
+            {/* Row 4: Payment Mode & Reference No */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Payment Mode *</label>
+                <select className="input-field" value={formData.payment_mode} onChange={(e) => setFormData({ ...formData, payment_mode: e.target.value })}>
+                  <option>Cash</option>
+                  <option>UPI</option>
+                  <option>Bank Transfer (NEFT/RTGS)</option>
+                  <option>Cheque</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Ref / Cheque / Txn No</label>
                 <input
-                  type="number"
-                  required
-                  min="0"
-                  step="0.01"
-                  className="input-field pl-9"
-                  value={formData.amount}
-                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                  placeholder="0.00"
+                  type="text" className="input-field"
+                  placeholder="If applicable"
+                  value={formData.reference_no}
+                  onChange={(e) => setFormData({ ...formData, reference_no: e.target.value })}
                 />
               </div>
             </div>
 
+            {/* Row 5: Party Name & Phone */}
+            <div className="border-t border-gray-100 pt-3">
+              <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Party / Person Details</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Party Name</label>
+                  <input
+                    type="text" className="input-field"
+                    placeholder="e.g. Ramesh Kumar"
+                    value={formData.party_name}
+                    onChange={(e) => setFormData({ ...formData, party_name: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Party Phone</label>
+                  <input
+                    type="text" className="input-field"
+                    placeholder="+91 XXXXX XXXXX"
+                    value={formData.party_phone}
+                    onChange={(e) => setFormData({ ...formData, party_phone: e.target.value })}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Row 6: Description */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Description (Optional)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Description / Remarks</label>
               <textarea
-                className="input-field h-24"
+                className="input-field h-20"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Add any extra details..."
+                placeholder="Additional notes or remarks..."
               ></textarea>
             </div>
 
-            <button type="submit" className="btn-primary w-full mt-4">
+            <button type="submit" className="btn-primary w-full mt-2">
               {isEdit ? 'Update Record' : 'Save Record'}
             </button>
           </form>

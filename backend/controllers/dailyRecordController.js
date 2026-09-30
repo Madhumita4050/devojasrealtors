@@ -16,13 +16,18 @@ exports.getDailyRecords = async (req, res) => {
 
 exports.createDailyRecord = async (req, res) => {
   try {
-    const { title, description, type, amount, record_date } = req.body;
+    const { title, description, type, amount, record_date, category, party_name, party_phone, payment_mode, reference_no } = req.body;
     const record = await DailyRecord.create({
       title,
       description,
       type,
       amount,
       record_date,
+      category: category || 'General',
+      party_name,
+      party_phone,
+      payment_mode: payment_mode || 'Cash',
+      reference_no,
       created_by: req.user.id
     });
     res.status(201).json({ success: true, data: record });
@@ -34,7 +39,7 @@ exports.createDailyRecord = async (req, res) => {
 exports.updateDailyRecord = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, type, amount, record_date } = req.body;
+    const { title, description, type, amount, record_date, category, party_name, party_phone, payment_mode, reference_no } = req.body;
     
     const record = await DailyRecord.findByPk(id);
     if (!record) return res.status(404).json({ success: false, message: 'Record not found' });
@@ -50,6 +55,11 @@ exports.updateDailyRecord = async (req, res) => {
       type,
       amount,
       record_date,
+      category: category || record.category,
+      party_name,
+      party_phone,
+      payment_mode: payment_mode || record.payment_mode,
+      reference_no,
       updated_by: req.user.id
     });
     
