@@ -33,76 +33,139 @@ const Invoices = () => {
   };
 
   const printManualReceipt = (form) => {
-    const win = window.open('', '_blank', 'width=900,height=600');
+    const win = window.open('', '_blank', 'width=900,height=1100');
     win.document.write(`<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Receipt — ${form.name}</title>
+<title>Official Receipt — ${form.name}</title>
 <style>
-  body { font-family: Arial, sans-serif; margin: 0; padding: 40px; color: #1e293b; }
-  .receipt-box { border: 2px solid #1e3a8a; padding: 30px; border-radius: 8px; max-width: 800px; margin: auto; }
-  .header { display: flex; justify-content: space-between; border-bottom: 2px solid #1e3a8a; padding-bottom: 20px; margin-bottom: 20px; }
-  .logo-text { font-size: 24px; font-weight: 900; color: #1e3a8a; letter-spacing: 2px; }
-  .title { background: #1e3a8a; color: white; padding: 4px 16px; font-weight: bold; font-size: 18px; letter-spacing: 2px; border-radius: 4px; }
-  .grid { display: flex; justify-content: space-between; margin-bottom: 30px; }
-  .box { flex: 1; }
-  .box h3 { font-size: 12px; color: #64748b; text-transform: uppercase; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; margin-bottom: 8px; }
-  .row { display: flex; margin-bottom: 4px; font-size: 14px; }
-  .row span:first-child { width: 100px; color: #64748b; }
-  .row span:last-child { font-weight: 600; }
-  .table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
-  .table th { background: #f8fafc; text-align: left; padding: 10px; border: 1px solid #e2e8f0; font-size: 13px; color: #475569; }
-  .table td { padding: 10px; border: 1px solid #e2e8f0; font-size: 14px; font-weight: bold; }
-  .footer { display: flex; justify-content: space-between; margin-top: 60px; text-align: center; }
-  .sig-line { border-top: 1px solid #94a3b8; padding-top: 8px; font-size: 12px; font-weight: bold; width: 200px; }
-  @media print { body { padding: 0; } .receipt-box { border: none; } }
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Roboto', Arial, sans-serif; background: #fff; color: #222; font-size: 13px; }
+  .page { width: 794px; margin: 0 auto; padding: 40px; background: #fff; position: relative; }
+  
+  /* ── Header ── */
+  .company-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 4px solid #1e3a8a; padding-bottom: 15px; margin-bottom: 25px; }
+  .company-logo { height: 75px; object-fit: contain; }
+  .company-info { text-align: right; }
+  .company-info h1 { font-size: 26px; font-weight: 900; color: #1e3a8a; letter-spacing: 1px; margin-bottom: 4px; }
+  .company-info p { font-size: 11px; color: #555; line-height: 1.4; }
+  
+  .receipt-title { text-align: center; background: #1e3a8a; color: #fff; font-size: 18px; font-weight: 800; padding: 8px 0; letter-spacing: 2px; margin-bottom: 25px; border-radius: 4px; }
+  
+  /* ── Details Grid ── */
+  .grid-2 { display: flex; gap: 20px; margin-bottom: 25px; }
+  .box { flex: 1; border: 2px solid #bfdbfe; border-radius: 6px; overflow: hidden; }
+  .box-title { background: #eff6ff; color: #1e3a8a; font-weight: 700; padding: 8px 12px; font-size: 12px; border-bottom: 2px solid #bfdbfe; text-transform: uppercase; letter-spacing: 1px; }
+  .box-content { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .row { display: flex; align-items: flex-end; }
+  .label { font-size: 11px; color: #555; font-weight: 600; width: 120px; text-transform: uppercase; }
+  .val { flex: 1; font-weight: 700; font-size: 13px; border-bottom: 1px dashed #94a3b8; padding-bottom: 2px; color: #0f172a; }
+  
+  /* ── Payment Details ── */
+  .payment-section { border: 2px solid #1e3a8a; border-radius: 6px; margin-bottom: 25px; overflow: hidden; }
+  .payment-title { background: #1e3a8a; color: #fff; font-weight: 700; padding: 8px 12px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+  .payment-content { padding: 16px; background: #f8fafc; }
+  
+  .pay-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+  .pay-row:last-child { border-bottom: none; }
+  .pay-label { color: #475569; font-weight: 500; }
+  .pay-val { font-weight: 800; color: #1e3a8a; font-size: 16px; }
+  
+  /* ── Signatures ── */
+  .sig-area { display: flex; justify-content: space-between; margin-top: 60px; padding: 0 20px; }
+  .sig-box { text-align: center; width: 200px; }
+  .sig-line { border-bottom: 2px solid #1e293b; height: 40px; margin-bottom: 8px; }
+  .sig-text { font-size: 12px; font-weight: 700; color: #334155; text-transform: uppercase; }
+  
+  /* ── Footer ── */
+  .footer { margin-top: 40px; text-align: center; font-size: 10px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 12px; }
+  
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .page { padding: 20px; width: 100%; }
+  }
 </style>
 </head>
 <body>
-  <div class="receipt-box">
-    <div class="header">
-      <div>
-        <div class="logo-text">DEVOJAS REALTORS</div>
-        <div style="font-size:11px; color:#64748b; margin-top:4px;">123, Real Estate Avenue, Varanasi</div>
-      </div>
-      <div style="text-align: right;">
-        <div class="title">RECEIPT</div>
-        <div style="margin-top:8px; font-size:13px;">Date: <strong>${new Date().toLocaleDateString('en-IN')}</strong></div>
-      </div>
-    </div>
-
-    <div class="grid">
-      <div class="box" style="margin-right:40px;">
-        <h3>Received From</h3>
-        <div class="row"><span>Name:</span> <span>${form.name}</span></div>
-        <div class="row"><span>Phone:</span> <span>${form.phone}</span></div>
-        <div class="row"><span>Address:</span> <span>${form.address || '—'}</span></div>
+  <div class="page">
+    
+    <!-- Header -->
+    <div class="company-header">
+      <img src="${window.location.origin}/logo.png" class="company-logo" alt="Logo" onerror="this.style.display='none'" />
+      <div class="company-info">
+        <h1>DEVOJAS REALTORS</h1>
+        <p>123, Real Estate Avenue, Business Park, Varanasi, UP</p>
+        <p>Phone: +91 9999000000 | Email: info@devojasrealtors.in</p>
       </div>
     </div>
-
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Particulars / Description</th>
-          <th>Payment Mode</th>
-          <th style="text-align: right;">Amount (INR)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>${form.particulars}</td>
-          <td>${form.paymentMode}</td>
-          <td style="text-align: right; color:#1e3a8a;">₹ ${Number(form.amount).toLocaleString('en-IN')}</td>
-        </tr>
-      </tbody>
-    </table>
-
+    
+    <div class="receipt-title">OFFICIAL PAYMENT RECEIPT</div>
+    
+    <div class="grid-2">
+      <!-- Customer Info -->
+      <div class="box">
+        <div class="box-title">Received From (Customer Details)</div>
+        <div class="box-content">
+          <div class="row"><div class="label">Name:</div><div class="val">${form.name}</div></div>
+          <div class="row"><div class="label">Phone:</div><div class="val">${form.phone}</div></div>
+          <div class="row"><div class="label">Address:</div><div class="val">${form.address || '—'}</div></div>
+        </div>
+      </div>
+      
+      <!-- Receipt Info -->
+      <div class="box">
+        <div class="box-title">Receipt Information</div>
+        <div class="box-content">
+          <div class="row"><div class="label">Receipt No:</div><div class="val">REC-${Math.floor(10000 + Math.random() * 90000)}</div></div>
+          <div class="row"><div class="label">Date:</div><div class="val">${new Date().toLocaleDateString('en-IN')}</div></div>
+          <div class="row"><div class="label">Generated By:</div><div class="val">Accounts Department</div></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Payment Box -->
+    <div class="payment-section">
+      <div class="payment-title">Payment Particulars</div>
+      <div class="payment-content">
+        <div class="pay-row">
+          <div class="pay-label">Property Details / Description</div>
+          <div class="pay-val" style="font-size:14px;">${form.particulars}</div>
+        </div>
+        <div class="pay-row">
+          <div class="pay-label">Mode of Payment</div>
+          <div class="pay-val" style="font-size:14px;">${form.paymentMode}</div>
+        </div>
+        <div class="pay-row" style="margin-top:10px; padding-top:16px; border-top: 2px dashed #cbd5e1;">
+          <div class="pay-label" style="font-size:16px; color:#0f172a; font-weight:700;">Total Amount Received</div>
+          <div class="pay-val" style="font-size:22px;">₹ ${Number(form.amount).toLocaleString('en-IN')}</div>
+        </div>
+      </div>
+    </div>
+    
+    <p style="font-size:11px; color:#64748b; font-style:italic; margin-bottom:40px;">* Sum of Rupees ${Number(form.amount).toLocaleString('en-IN')} only. Subject to realization of cheque/online transfer.</p>
+    
+    <!-- Signatures -->
+    <div class="sig-area">
+      <div class="sig-box">
+        <div class="sig-line"></div>
+        <div class="sig-text">Customer Signature</div>
+      </div>
+      <div class="sig-box">
+        <div class="sig-line"></div>
+        <div class="sig-text">Accounts Department</div>
+      </div>
+      <div class="sig-box">
+        <div class="sig-line"></div>
+        <div class="sig-text">Authorised Signatory</div>
+      </div>
+    </div>
+    
     <div class="footer">
-      <div class="sig-line">Prepared By (Accounts)</div>
-      <div class="sig-line">Authorised Signatory</div>
-      <div class="sig-line">Customer Signature</div>
+      This is a computer-generated receipt from Devojas Realtors. Valid only with authorised signature.
     </div>
+    
   </div>
   <script>window.onload = function(){ window.print(); }</script>
 </body>
