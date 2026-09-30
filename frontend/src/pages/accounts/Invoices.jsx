@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Eye, Printer } from 'lucide-react';
+import { Eye, Printer, Plus } from 'lucide-react';
 import api from '../../api/axios';
 import Modal from '../../components/Modal';
 
@@ -7,6 +7,10 @@ const Invoices = () => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
+  const [showManualForm, setShowManualForm] = useState(false);
+  const [manualForm, setManualForm] = useState({
+    name: '', phone: '', address: '', particulars: '', amount: '', paymentMode: 'Cash'
+  });
 
   useEffect(() => {
     api.get('/accounts/invoices')
@@ -21,11 +25,101 @@ const Invoices = () => {
 
   const handlePrint = () => window.print();
 
+  const handleManualSubmit = (e) => {
+    e.preventDefault();
+    printManualReceipt(manualForm);
+    setShowManualForm(false);
+    setManualForm({ name: '', phone: '', address: '', particulars: '', amount: '', paymentMode: 'Cash' });
+  };
+
+  const printManualReceipt = (form) => {
+    const win = window.open('', '_blank', 'width=900,height=600');
+    win.document.write(`<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Receipt — ${form.name}</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 0; padding: 40px; color: #1e293b; }
+  .receipt-box { border: 2px solid #1e3a8a; padding: 30px; border-radius: 8px; max-width: 800px; margin: auto; }
+  .header { display: flex; justify-content: space-between; border-bottom: 2px solid #1e3a8a; padding-bottom: 20px; margin-bottom: 20px; }
+  .logo-text { font-size: 24px; font-weight: 900; color: #1e3a8a; letter-spacing: 2px; }
+  .title { background: #1e3a8a; color: white; padding: 4px 16px; font-weight: bold; font-size: 18px; letter-spacing: 2px; border-radius: 4px; }
+  .grid { display: flex; justify-content: space-between; margin-bottom: 30px; }
+  .box { flex: 1; }
+  .box h3 { font-size: 12px; color: #64748b; text-transform: uppercase; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; margin-bottom: 8px; }
+  .row { display: flex; margin-bottom: 4px; font-size: 14px; }
+  .row span:first-child { width: 100px; color: #64748b; }
+  .row span:last-child { font-weight: 600; }
+  .table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+  .table th { background: #f8fafc; text-align: left; padding: 10px; border: 1px solid #e2e8f0; font-size: 13px; color: #475569; }
+  .table td { padding: 10px; border: 1px solid #e2e8f0; font-size: 14px; font-weight: bold; }
+  .footer { display: flex; justify-content: space-between; margin-top: 60px; text-align: center; }
+  .sig-line { border-top: 1px solid #94a3b8; padding-top: 8px; font-size: 12px; font-weight: bold; width: 200px; }
+  @media print { body { padding: 0; } .receipt-box { border: none; } }
+</style>
+</head>
+<body>
+  <div class="receipt-box">
+    <div class="header">
+      <div>
+        <div class="logo-text">DEVOJAS REALTORS</div>
+        <div style="font-size:11px; color:#64748b; margin-top:4px;">123, Real Estate Avenue, Varanasi</div>
+      </div>
+      <div style="text-align: right;">
+        <div class="title">RECEIPT</div>
+        <div style="margin-top:8px; font-size:13px;">Date: <strong>${new Date().toLocaleDateString('en-IN')}</strong></div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="box" style="margin-right:40px;">
+        <h3>Received From</h3>
+        <div class="row"><span>Name:</span> <span>${form.name}</span></div>
+        <div class="row"><span>Phone:</span> <span>${form.phone}</span></div>
+        <div class="row"><span>Address:</span> <span>${form.address || '—'}</span></div>
+      </div>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Particulars / Description</th>
+          <th>Payment Mode</th>
+          <th style="text-align: right;">Amount (INR)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>${form.particulars}</td>
+          <td>${form.paymentMode}</td>
+          <td style="text-align: right; color:#1e3a8a;">₹ ${Number(form.amount).toLocaleString('en-IN')}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="footer">
+      <div class="sig-line">Prepared By (Accounts)</div>
+      <div class="sig-line">Authorised Signatory</div>
+      <div class="sig-line">Customer Signature</div>
+    </div>
+  </div>
+  <script>window.onload = function(){ window.print(); }</script>
+</body>
+</html>`);
+    win.document.close();
+  };
+
   return (
     <div className="space-y-5">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-800">Invoices & Receipts</h1>
-        <p className="text-gray-500 text-sm">Generate and view invoices for completed deals</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">Invoices & Receipts</h1>
+          <p className="text-gray-500 text-sm">Generate and view invoices for completed deals</p>
+        </div>
+        <button onClick={() => setShowManualForm(true)} className="btn-primary flex items-center gap-2">
+          <Plus size={16} /> New Custom Receipt
+        </button>
       </div>
 
       <div className="card overflow-x-auto p-0">
@@ -127,6 +221,48 @@ const Invoices = () => {
             </button>
           </div>
         )}
+      </Modal>
+
+      {/* Manual Custom Receipt Modal */}
+      <Modal title="Generate Custom Receipt" isOpen={showManualForm} onClose={() => setShowManualForm(false)}>
+        <form onSubmit={handleManualSubmit} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Customer Name *</label>
+              <input required type="text" className="input-field" value={manualForm.name} onChange={e => setManualForm({...manualForm, name: e.target.value})} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
+              <input required type="text" className="input-field" value={manualForm.phone} onChange={e => setManualForm({...manualForm, phone: e.target.value})} />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+            <input type="text" className="input-field" value={manualForm.address} onChange={e => setManualForm({...manualForm, address: e.target.value})} />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Particulars / Property Details *</label>
+            <input required type="text" className="input-field" placeholder="e.g. Advance booking for Plot 12" value={manualForm.particulars} onChange={e => setManualForm({...manualForm, particulars: e.target.value})} />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Amount Received (₹) *</label>
+              <input required type="number" className="input-field" value={manualForm.amount} onChange={e => setManualForm({...manualForm, amount: e.target.value})} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Payment Mode</label>
+              <select className="input-field" value={manualForm.paymentMode} onChange={e => setManualForm({...manualForm, paymentMode: e.target.value})}>
+                <option>Cash</option>
+                <option>Bank Transfer (NEFT/RTGS)</option>
+                <option>UPI</option>
+                <option>Cheque</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" className="btn-primary w-full flex items-center justify-center gap-2 mt-2">
+            <Printer size={18} /> Generate & Print PDF
+          </button>
+        </form>
       </Modal>
     </div>
   );

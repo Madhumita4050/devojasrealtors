@@ -42,18 +42,18 @@ const printPDF = (form) => {
   .page { width: 794px; min-height: 1123px; margin: 0 auto; padding: 28px 32px; background: #fff; position: relative; }
 
   /* ── Header ── */
-  .company-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #e05a00; padding-bottom: 14px; margin-bottom: 18px; }
+  .company-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #1e3a8a; padding-bottom: 14px; margin-bottom: 18px; }
   .company-logo { height: 64px; object-fit: contain; }
   .company-info { text-align: right; }
-  .company-info h1 { font-size: 22px; font-weight: 900; color: #e05a00; letter-spacing: 0.5px; }
+  .company-info h1 { font-size: 22px; font-weight: 900; color: #1e3a8a; letter-spacing: 0.5px; }
   .company-info p { font-size: 10px; color: #555; margin-top: 2px; }
 
   /* ── Section header ── */
-  .section-title { background: #e05a00; color: #fff; font-size: 13px; font-weight: 800; padding: 7px 14px; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 0; }
+  .section-title { background: #1e3a8a; color: #fff; font-size: 13px; font-weight: 800; padding: 7px 14px; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 0; }
 
   /* ── Grid tables ── */
-  .form-section { border: 1.5px solid #e05a00; margin-bottom: 14px; }
-  .form-row { display: flex; align-items: center; border-bottom: 1px solid #f0c8a0; padding: 6px 12px; gap: 8px; flex-wrap: wrap; }
+  .form-section { border: 1.5px solid #1e3a8a; margin-bottom: 14px; }
+  .form-row { display: flex; align-items: center; border-bottom: 1px solid #bfdbfe; padding: 6px 12px; gap: 8px; flex-wrap: wrap; }
   .form-row:last-child { border-bottom: none; }
   .label { font-size: 11px; color: #555; font-weight: 500; white-space: nowrap; min-width: 130px; }
   .value { font-size: 11.5px; font-weight: 700; color: #222; flex: 1; border-bottom: 1.5px solid #333; min-width: 80px; padding-bottom: 1px; }
@@ -62,13 +62,13 @@ const printPDF = (form) => {
 
   /* ── Multi-col row ── */
   .multi-col { display: flex; gap: 0; }
-  .col-group { display: flex; align-items: center; gap: 6px; flex: 1; padding: 6px 12px; border-right: 1px solid #f0c8a0; }
+  .col-group { display: flex; align-items: center; gap: 6px; flex: 1; padding: 6px 12px; border-right: 1px solid #bfdbfe; }
   .col-group:last-child { border-right: none; }
 
   /* ── Note box ── */
-  .note-box { background: #fff8f0; border: 1.5px solid #e05a00; padding: 8px 12px; margin-bottom: 14px; }
+  .note-box { background: #eff6ff; border: 1.5px solid #1e3a8a; padding: 8px 12px; margin-bottom: 14px; }
   .note-box p { font-size: 9.5px; color: #555; line-height: 1.5; margin-bottom: 2px; }
-  .note-box strong { color: #e05a00; }
+  .note-box strong { color: #1e3a8a; }
 
   /* ── Signature area ── */
   .sig-area { display: flex; flex-direction: column; gap: 14px; margin-bottom: 14px; padding: 10px 16px; }
@@ -78,12 +78,12 @@ const printPDF = (form) => {
   .sig-box-right { margin-left: auto; text-align: right; font-size: 11px; font-weight: 700; color: #333; }
 
   /* ── Office use ── */
-  .office-section { border: 2.5px solid #e05a00; }
+  .office-section { border: 2.5px solid #1e3a8a; }
   .office-inner { padding: 10px 14px; display: flex; flex-direction: column; gap: 10px; }
 
   /* ── Footer ── */
   .footer { margin-top: 18px; text-align: center; font-size: 9px; color: #999; border-top: 1px solid #eee; padding-top: 8px; }
-  .badge { display: inline-block; background: #e05a00; color: #fff; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-bottom: 10px; }
+  .badge { display: inline-block; background: #1e3a8a; color: #fff; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-bottom: 10px; }
   @media print {
     body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .page { width: 100%; padding: 16px 18px; }
@@ -205,7 +205,7 @@ const printPDF = (form) => {
   </div>
 
   <!-- APPLICANT SIGNATURE -->
-  <div class="sig-area" style="border:1.5px solid #f0c8a0;margin-bottom:14px;">
+  <div class="sig-area" style="border:1.5px solid #bfdbfe;margin-bottom:14px;">
     <div class="sig-row">
       <span class="sig-label">Name of Applicant</span>
       <span class="sig-line">&nbsp;${form.applicant_name || ''}</span>
@@ -374,11 +374,11 @@ const BookingForms = ({ isAdmin = false }) => {
             {isAdmin ? 'Review and approve booking forms submitted by associates' : 'Submit and manage client plot booking forms'}
           </p>
         </div>
-        {!isAdmin && (
+        <div>
           <button onClick={openAdd} className="btn-primary flex items-center gap-2">
             <Plus size={18} /> New Booking Form
           </button>
-        )}
+        </div>
       </div>
 
       {/* Table */}
@@ -432,11 +432,17 @@ const BookingForms = ({ isAdmin = false }) => {
                     </button>
                     {isAdmin && bf.status === 'pending' && (
                       <>
+                        <button onClick={() => openEdit(bf)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl" title="Edit">
+                          <Edit2 size={16} />
+                        </button>
                         <button onClick={() => handleStatusUpdate(bf.id, 'approved')} className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-xl" title="Approve">
                           <CheckCircle size={16} />
                         </button>
                         <button onClick={() => handleStatusUpdate(bf.id, 'rejected')} className="p-2 text-red-500 hover:bg-red-50 rounded-xl" title="Reject">
                           <XCircle size={16} />
+                        </button>
+                        <button onClick={() => handleDelete(bf.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-xl" title="Delete">
+                          <Trash2 size={16} />
                         </button>
                       </>
                     )}

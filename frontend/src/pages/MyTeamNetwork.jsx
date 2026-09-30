@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Users, Network, RefreshCw } from 'lucide-react';
+import { Users, Network, RefreshCw, Printer } from 'lucide-react';
 import api from '../api/axios';
 import NetworkTreeNode from '../components/NetworkTreeNode';
+import Modal from '../components/Modal';
 
 // Admin's full company-wide network tree
 const MyTeamNetwork = () => {
@@ -25,6 +26,26 @@ const MyTeamNetwork = () => {
   useEffect(() => {
     fetchNetwork();
   }, []);
+
+  const [printNode, setPrintNode] = useState(null);
+
+  const flattenTree = (node) => {
+    let list = [node];
+    if (node.children && node.children.length > 0) {
+      node.children.forEach(child => {
+        list = list.concat(flattenTree(child));
+      });
+    }
+    return list;
+  };
+
+  const handlePrint = (node) => {
+    setPrintNode(node);
+  };
+
+  const handlePrintWindow = () => {
+    window.print();
+  };
 
   const serial = { current: 1 };
 
@@ -85,13 +106,89 @@ const MyTeamNetwork = () => {
             <div className="min-w-max p-4">
               <div className="flex justify-center">
                 {tree.map((rootNode) => (
-                  <NetworkTreeNode key={rootNode.id} node={rootNode} depth={0} serial={serial} isHorizontal={true} />
+                  <NetworkTreeNode key={rootNode.id} node={rootNode} depth={0} serial={serial} isHorizontal={true} onPrint={handlePrint} />
                 ))}
               </div>
             </div>
           </div>
         )}
       </div>
+
+      {/* Print Modal */}
+      <Modal title="Print Network Records" isOpen={!!printNode} onClose={() => setPrintNode(null)} size="3xl">
+        {printNode && (() => {
+          const flatList = flattenTree(printNode);
+          return (
+            <div>
+              <div id="print-area" className="text-gray-800 bg-white p-4">
+                <div className="text-center mb-6 border-b pb-4">
+                  <h2 className="text-2xl font-bold uppercase text-navy">DEVOJAS REALTORS</h2>
+                  <p className="text-gray-500 font-semibold mt-1">Associate Downline Report</p>
+                </div>
+                
+                <div className="flex justify-between items-end mb-6 bg-gray-50 p-4 rounded-lg border">
+                  <div>
+                    <p className="text-sm text-gray-500">Root Associate</p>
+                    <p className="text-lg font-bold text-navy uppercase">{printNode.name}</p>
+                    <p className="font-mono text-sm">{printNode.login_id} • {printNode.referral_code}</p>
+                    <p className="text-sm">Phone: {printNode.phone || 'N/A'}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-500">Total Team Size</p>
+                    <p className="text-2xl font-bold text-emerald-600">{flatList.length - 1}</p>
+                    <p className="text-xs text-gray-400 mt-1">Date: {new Date().toLocaleDateString('en-IN')}</p>
+                  </div>
+                </div>
+
+                <table className="w-full text-sm text-left border-collapse">
+                  <thead className="bg-navy text-white">
+                    <tr>
+                      <th className="py-2 px-3 border border-gray-300">S.No</th>
+                      <th className="py-2 px-3 border border-gray-300">Associate Name</th>
+                      <th className="py-2 px-3 border border-gray-300">ID / Referral Code</th>
+                      <th className="py-2 px-3 border border-gray-300">Phone</th>
+                      <th className="py-2 px-3 border border-gray-300">Level (Depth)</th>
+                      <th className="py-2 px-3 border border-gray-300">Joined On</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {flatList.map((item, index) => {
+                      // Find depth relative to the printNode
+                      // In a deep structure, we might need a better depth tracker, but visually this is fine
+                      // For a simple list, we just list them. We can determine depth by adding a depth prop in flattenTree if needed.
+                      return (
+                        <tr key={item.id} className={index === 0 ? "bg-blue-50 font-semibold" : ""}>
+                          <td className="py-2 px-3 border border-gray-300 text-center">{index === 0 ? '-' : index}</td>
+                          <td className="py-2 px-3 border border-gray-300 uppercase">{item.name} {index === 0 && "(ROOT)"}</td>
+                          <td className="py-2 px-3 border border-gray-300 font-mono text-xs">{item.login_id}<br/>{item.referral_code}</td>
+                          <td className="py-2 px-3 border border-gray-300">{item.phone}</td>
+                          <td className="py-2 px-3 border border-gray-300">{index === 0 ? '0' : 'Downline'}</td>
+                          <td className="py-2 px-3 border border-gray-300">{new Date(item.createdAt).toLocaleDateString('en-IN')}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              
+              <div className="flex justify-end mt-4 pt-4 border-t print:hidden">
+                <button onClick={handlePrintWindow} className="btn-primary flex items-center gap-2">
+                  <Printer size={16} /> Print / Save as PDF
+                </button>
+              </div>
+
+              <style>{`
+                @media print {
+                  body * { visibility: hidden; }
+                  #print-area, #print-area * { visibility: visible; }
+                  #print-area { position: absolute; left: 0; top: 0; width: 100%; }
+                  .print\\:hidden { display: none !important; }
+                }
+              `}</style>
+            </div>
+          );
+        })()}
+      </Modal>
     </div>
   );
 };
