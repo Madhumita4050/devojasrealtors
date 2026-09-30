@@ -106,25 +106,26 @@ const registerAssociate = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'This Aadhar number is already registered' });
     }
 
-    // --- Sponsor lookup (optional) ---
+    // --- Sponsor lookup (MANDATORY for associates) ---
+    if (!sponsor_code || !sponsor_code.trim()) {
+      return res.status(400).json({ success: false, message: 'Sponsor / Referral Code is required for Associate registration' });
+    }
     let referred_by = null;
     let sponsorUser = null;
-    if (sponsor_code && sponsor_code.trim()) {
-      // Support both referral_code and login_id as sponsor code
-      sponsorUser = await User.findOne({
-        where: {
-          [Op.or]: [
-            { referral_code: sponsor_code.trim() },
-            { login_id: sponsor_code.trim() }
-          ],
-          role: 'associate'
-        }
-      });
-      if (!sponsorUser) {
-        return res.status(400).json({ success: false, message: 'Sponsor code not found. Please check and try again.' });
+    // Support both referral_code and login_id as sponsor code
+    sponsorUser = await User.findOne({
+      where: {
+        [Op.or]: [
+          { referral_code: sponsor_code.trim() },
+          { login_id: sponsor_code.trim() }
+        ],
+        role: 'associate'
       }
-      referred_by = sponsorUser.id;
+    });
+    if (!sponsorUser) {
+      return res.status(400).json({ success: false, message: 'Sponsor code not found. Please check and try again.' });
     }
+    referred_by = sponsorUser.id;
 
     // --- Create associate (pending approval) ---
     const hashedPassword = await bcrypt.hash(password, 10);

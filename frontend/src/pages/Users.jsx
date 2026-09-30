@@ -116,8 +116,10 @@ const Users = () => {
         setCreatedCreds({
           referral_code: res.data.data.referral_code,
           loginId: res.data.data.login_id || res.data.data.email || res.data.data.phone,
+          phone: res.data.data.phone,
           generatedPassword: res.data.generatedPassword || form.password || '123456',
           emailSent: res.data.emailSent || false,
+          smsSent: res.data.smsSent || false,
           role: res.data.data.role
         });
       }
@@ -477,9 +479,9 @@ const Users = () => {
             </div>
           )}
           <div>
-            <label className="text-sm font-medium text-gray-700 mb-1 block">Referred By (Associate)</label>
-            <select value={form.referred_by} onChange={(e) => setForm({ ...form, referred_by: e.target.value })} className="input-field">
-              <option value="">None</option>
+            <label className="text-sm font-medium text-gray-700 mb-1 block">Referred By / Sponsored By <span className="text-red-500">*</span></label>
+            <select required value={form.referred_by} onChange={(e) => setForm({ ...form, referred_by: e.target.value })} className="input-field">
+              <option value="" disabled>Select Sponsor</option>
               {associates.filter(a => a.id !== editingUser?.id).map((a) => (
                 <option key={a.id} value={a.id}>{a.name} ({a.referral_code})</option>
               ))}
@@ -512,6 +514,62 @@ const Users = () => {
         title="Delete this user?"
         message={`"${deleteTarget?.name}" will be permanently removed.`}
       />
+
+      {/* ✅ Credentials Modal — shows after new user is created */}
+      <Modal title="✅ User Created Successfully" isOpen={!!createdCreds} onClose={() => { setCreatedCreds(null); setModalOpen(false); }}>
+        {createdCreds && (
+          <div className="space-y-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-500 font-medium">Login ID</span>
+                <span className="font-bold font-mono text-navy bg-white px-3 py-1 rounded-lg border">{createdCreds.loginId}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-500 font-medium">Password</span>
+                <span className="font-bold font-mono text-navy bg-white px-3 py-1 rounded-lg border">{createdCreds.generatedPassword}</span>
+              </div>
+              {createdCreds.referral_code && (
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-500 font-medium">Referral Code</span>
+                  <span className="font-bold font-mono text-navy bg-white px-3 py-1 rounded-lg border">{createdCreds.referral_code}</span>
+                </div>
+              )}
+              {createdCreds.phone && (
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-500 font-medium">Mobile</span>
+                  <span className="font-medium">{createdCreds.phone}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className={`flex items-center gap-2 rounded-lg p-3 border ${ createdCreds.smsSent ? 'bg-green-50 border-green-200 text-green-700' : 'bg-amber-50 border-amber-200 text-amber-700' }`}>
+                <span className="text-xl">{createdCreds.smsSent ? '📱' : '⏳'}</span>
+                <div>
+                  <p className="font-semibold">{createdCreds.smsSent ? 'SMS Sent!' : 'SMS (Mock Mode)'}</p>
+                  <p className="text-xs">{createdCreds.smsSent ? `Credentials sent to ${createdCreds.phone}` : 'Configure SMS_API_KEY in .env to enable real SMS'}</p>
+                </div>
+              </div>
+              <div className={`flex items-center gap-2 rounded-lg p-3 border ${ createdCreds.emailSent ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-500' }`}>
+                <span className="text-xl">{createdCreds.emailSent ? '✉️' : '📧'}</span>
+                <div>
+                  <p className="font-semibold">{createdCreds.emailSent ? 'Email Sent!' : 'Email (Mock Mode)'}</p>
+                  <p className="text-xs">{createdCreds.emailSent ? 'Credentials email delivered' : 'Configure SMTP in .env to enable'}</p>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-xs text-gray-400 text-center">Please note down or share these credentials with the user manually if SMS/Email is in mock mode.</p>
+
+            <button
+              onClick={() => { setCreatedCreds(null); setModalOpen(false); }}
+              className="btn-primary w-full"
+            >
+              Done
+            </button>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

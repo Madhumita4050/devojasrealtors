@@ -384,12 +384,12 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
                 {/* Sponsor Code — Associate only */}
                 {signupRole === 'associate' && (
                   <div>
-                    <label className={labelClass}>Sponsored By (Referral Code / Associate ID)</label>
+                    <label className={labelClass}>Sponsored By (Referral Code / Associate ID) *</label>
                     <div className="relative">
                       <IdCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <input type="text" value={signupForm.sponsor_code}
+                      <input type="text" required value={signupForm.sponsor_code}
                         onChange={(e) => setSignupForm({ ...signupForm, sponsor_code: e.target.value })}
-                        placeholder="e.g. DEV-0001 or AMITSH123 (optional)" className={inputClass} />
+                        placeholder="e.g. DEV-0001 or AMITSH123" className={inputClass} />
                     </div>
                     <p className="text-[10px] text-gray-400 mt-1">Ask your sponsor for their Associate ID or Referral Code</p>
                   </div>

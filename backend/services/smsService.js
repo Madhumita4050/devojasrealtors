@@ -21,4 +21,18 @@ const sendOTP = async (phone, otp) => {
   return { success: true, mock: false };
 };
 
-module.exports = { sendOTP, isLive };
+const sendWelcomeSMS = async (phone, loginId, password) => {
+  const message = `Welcome to Devojas Realtors! Your Login ID is ${loginId} and Password is ${password}. Please login to access your dashboard.`;
+  
+  if (!isLive) {
+    console.log(`[MOCK SMS] To: ${phone} | Message: ${message}`);
+    return { success: true, mock: true };
+  }
+
+  // Real SMS API call for welcome message (MSG91 / Twilio / Fast2SMS)
+  // e.g. await axios.get(`https://www.fast2sms.com/dev/bulkV2?authorization=${process.env.SMS_API_KEY}&route=q&message=${encodeURIComponent(message)}&language=english&flash=0&numbers=${phone}`);
+  
+  return { success: true, mock: false };
+};
+
+module.exports = { sendOTP, sendWelcomeSMS, isLive };
