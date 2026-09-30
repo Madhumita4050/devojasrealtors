@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronRight, Hash } from 'lucide-react';
+import { ChevronDown, ChevronRight, Hash, Printer } from 'lucide-react';
 import './NetworkTreeNode.css';
 
 /**
@@ -7,7 +7,7 @@ import './NetworkTreeNode.css';
  * Renders in a horizontal org-chart layout with circular avatar,
  * name, login ID, and responsive connector lines.
  */
-const NetworkTreeNode = ({ node, depth = 0, serial = { current: 1 } }) => {
+const NetworkTreeNode = ({ node, depth = 0, serial = { current: 1 }, onPrint }) => {
   const [expanded, setExpanded] = useState(depth < 2);
 
   const hasChildren = node?.children && node.children.length > 0;
@@ -38,9 +38,20 @@ const NetworkTreeNode = ({ node, depth = 0, serial = { current: 1 } }) => {
         <div className="text-center w-full">
           <p className="text-sm font-bold text-white truncate px-1" title={node?.name}>{node?.name || 'Associate'}</p>
           {node?.login_id && (
-            <p className="text-[11px] text-gold font-bold flex items-center justify-center gap-1 mt-0.5">
-              <Hash size={11} /> {node.login_id}
-            </p>
+            <div className="flex items-center justify-center gap-2 mt-0.5">
+              <p className="text-[11px] text-gold font-bold flex items-center gap-1">
+                <Hash size={11} /> {node.login_id}
+              </p>
+              {onPrint && (
+                <button 
+                  onClick={(e) => { e.stopPropagation(); onPrint(node); }}
+                  className="p-1 rounded bg-blue-900/50 hover:bg-blue-800 text-blue-300 hover:text-white transition"
+                  title="Print Downline Report"
+                >
+                  <Printer size={12} />
+                </button>
+              )}
+            </div>
           )}
           <p className="text-[10px] text-slate-400 mt-1">
             {node?.phone ? `📞 ${node.phone}` : (node?.createdAt ? `Join: ${new Date(node.createdAt).toLocaleDateString('en-IN')}` : '')}
@@ -63,7 +74,7 @@ const NetworkTreeNode = ({ node, depth = 0, serial = { current: 1 } }) => {
         <div className="org-tree-children">
           {node.children.map((child) => (
             <div key={child.id} className="org-tree-node-col">
-              <NetworkTreeNode node={child} depth={depth + 1} serial={serial} />
+              <NetworkTreeNode node={child} depth={depth + 1} serial={serial} onPrint={onPrint} />
             </div>
           ))}
         </div>
