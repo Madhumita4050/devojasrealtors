@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, User, Lock, Phone, Mail, Check, CreditCard, MapPin, Hash, Eye, EyeOff, IdCard, ArrowLeft, ChevronRight, AlertCircle, CheckCircle } from 'lucide-react';
+import { useState } from 'react';
+import { X, User, Lock, Phone, Mail, CreditCard, MapPin, Hash, Eye, EyeOff, IdCard, ArrowLeft, ChevronRight, AlertCircle, CheckCircle } from 'lucide-react';
 import { authService } from '../services/authService';
 
 /**

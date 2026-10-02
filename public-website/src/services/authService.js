@@ -35,30 +35,24 @@ export const authService = {
     return { success: false, message: res.data?.message || res.error || 'Registration failed. Please try again.' };
   },
 
-  /**
-   * Register as Client — simple registration, admin approves.
-   */
-  async signupClient({ name, email, phone, address, password, confirm_password }) {
-    const res = await apiClient('/auth/register-client', {
+  async signupAccounts({ name, email, phone, address, password, confirm_password }) {
+    const res = await apiClient('/auth/register', {
       method: 'POST',
-      data: { name, email: email || undefined, phone, address, password, confirm_password }
+      data: { name, email: email || undefined, phone, address, password, confirm_password, role: 'accounts' }
     });
     if (res.success) {
-      return { success: true, data: res.data?.data || res.data };
+      return { success: true, data: res.data?.data || res.data, user: res.data?.user };
     }
     return { success: false, message: res.data?.message || res.error || 'Registration failed. Please try again.' };
   },
 
-  /**
-   * Register as Accounts — simple registration, admin approves.
-   */
-  async signupAccounts({ name, email, phone, address, password, confirm_password }) {
-    const res = await apiClient('/auth/register-accounts', {
+  async signupClient({ name, email, phone, address, password, confirm_password }) {
+    const res = await apiClient('/auth/register', {
       method: 'POST',
-      data: { name, email: email || undefined, phone, address, password, confirm_password }
+      data: { name, email: email || undefined, phone, address, password, confirm_password, role: 'client' }
     });
     if (res.success) {
-      return { success: true, data: res.data?.data || res.data };
+      return { success: true, data: res.data?.data || res.data, user: res.data?.user };
     }
     return { success: false, message: res.data?.message || res.error || 'Registration failed. Please try again.' };
   },

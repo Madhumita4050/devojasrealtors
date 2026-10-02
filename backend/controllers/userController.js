@@ -86,7 +86,6 @@ const createUser = async (req, res, next) => {
     const user = await User.create({
       name, email: email || null, phone,
       password: hashedPassword,
-      plain_password: plainPassword,
       role: role || 'client',
       referred_by: referred_by || null,
       referral_commission_percent: isAssociate
@@ -307,8 +306,46 @@ const impersonateUser = async (req, res, next) => {
   }
 };
 
+// @desc Get 6 fixed associate accounts
+// @route GET /api/users/fixed-associates
+const getFixedAssociates = async (req, res, next) => {
+  try {
+    const users = await User.findAll({
+      where: { is_fixed_associate: true },
+      attributes: ['id', 'login_id', 'name', 'email', 'phone', 'role', 'status'],
+      order: [['login_id', 'ASC']]
+    });
+    res.json({ success: true, count: users.length, data: users });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc Reset password for fixed associate
+// @route POST /api/users/:id/reset-fixed-associate
+const resetFixedAssociatePassword = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ where: { id: req.params.id, is_fixed_associate: true } });
+    if (!user) return res.status(404).json({ success: false, message: 'Fixed associate not found' });
+    
+    const newPassword = generatePassword();
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+    
+    // Optionally email them, though these might not have emails
+    if (user.email) {
+      await sendCredentialsEmail(user, user.login_id, newPassword);
+    }
+    
+    res.json({ success: true, message: 'Password reset successfully', newPassword });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getUsers, getUser, createUser, updateUser, deleteUser,
   updateKycStatus, toggleUserStatus, getReferralTree, 
-  approveAssociate, rejectAssociate, impersonateUser
+  approveAssociate, rejectAssociate, impersonateUser,
+  getFixedAssociates, resetFixedAssociatePassword
 };

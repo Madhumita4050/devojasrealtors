@@ -90,6 +90,11 @@ const User = sequelize.define('User', {
     type: DataTypes.ENUM('active', 'blocked', 'pending_approval'),
     defaultValue: 'active'
   },
+  is_fixed_associate: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+    comment: 'True for the 6 pre-defined associate login accounts (devojas-0001 to devojas-0006)'
+  },
   approved_by: {
     type: DataTypes.INTEGER,
     allowNull: true,

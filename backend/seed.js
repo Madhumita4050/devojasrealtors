@@ -161,6 +161,39 @@ const seed = async () => {
       console.log(`✅ Associate created → ${a.name} | ${login_id} | Phone: ${a.phone} | Pass: ${a.password}`);
     }
 
+    // ─── 2.5 FIXED ASSOCIATES ────────────────────────────────────────────────
+    for (let i = 1; i <= 6; i++) {
+      const login_id = `devojas-000${i}`;
+      const existing = await User.findOne({ where: { login_id, is_fixed_associate: true } });
+      
+      if (!existing) {
+        const pw = await bcrypt.hash('password', 10);
+        const refCode = `FIXED${i}${Math.floor(100 + Math.random() * 900)}`;
+        
+        // Ensure no duplicate phone by using a fake, unique phone pattern for these
+        const phone = `999900100${i}`; 
+        const email = `associate${i}@devojas.com`;
+        
+        const user = await User.create({
+          name: `Fixed Associate ${i}`,
+          email,
+          phone,
+          password: pw,
+          role: 'associate',
+          status: 'active',
+          kyc_status: 'approved',
+          referral_code: refCode,
+          is_fixed_associate: true
+        });
+        
+        await user.update({ login_id });
+        await Wallet.create({ user_id: user.id, balance: 0 });
+        console.log(`✅ Fixed Associate created → ${login_id} | Pass: password`);
+      } else {
+        console.log(`ℹ️  Fixed Associate ${login_id} already exists`);
+      }
+    }
+
     // ─── 3. CLIENTS ──────────────────────────────────────────────────────────
     const clientSeedData = [
       { name: 'Deepak Agarwal', email: 'deepak.ag@gmail.com', phone: '9800000001', address: 'H-55, Mahmoorganj, Varanasi' },

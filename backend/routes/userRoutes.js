@@ -3,11 +3,15 @@ const router = express.Router();
 const {
   getUsers, getUser, createUser, updateUser, deleteUser,
   updateKycStatus, toggleUserStatus, getReferralTree, 
-  approveAssociate, rejectAssociate, impersonateUser
+  approveAssociate, rejectAssociate, impersonateUser,
+  getFixedAssociates, resetFixedAssociatePassword
 } = require('../controllers/userController');
 const { protect, authorize } = require('../middleware/auth');
 
 router.use(protect, authorize('admin'));
+
+router.get('/fixed-associates', getFixedAssociates);
+router.post('/:id/reset-fixed-associate', resetFixedAssociatePassword);
 
 router.get('/', getUsers);
 router.post('/', createUser);

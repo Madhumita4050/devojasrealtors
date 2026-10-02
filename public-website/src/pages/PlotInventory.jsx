@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { MapPin, Grid2x2, IndianRupee, RefreshCw, CheckCircle, XCircle, Layers, ArrowRight, Filter, X, Home, LayoutGrid, BadgeCheck, Clock } from 'lucide-react';
-import { apiClient } from '../services/api';
 
 const BASE_API = import.meta.env.VITE_API_BASE_URL || '';
 
@@ -25,7 +24,6 @@ const statusConfig = {
 
 function PlotCard({ plot }) {
   const cfg = statusConfig[plot.status] || statusConfig.available;
-  const StatusIcon = cfg.icon;
 
   return (
     <div
@@ -127,7 +125,6 @@ function PlotCard({ plot }) {
 
 export default function PlotInventory() {
   const [plots, setPlots] = useState([]);
-  const [filtered, setFiltered] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isLive, setIsLive] = useState(false);
   const [statusFilter, setStatusFilter] = useState('all');
@@ -142,7 +139,6 @@ export default function PlotInventory() {
       if (res.ok) {
         const json = await res.json();
         setPlots(json.data || []);
-        setFiltered(json.data || []);
         setIsLive(true);
       } else {
         setIsLive(false);
@@ -155,9 +151,10 @@ export default function PlotInventory() {
     }
   };
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { fetchPlots(); }, []);
 
-  useEffect(() => {
+  const filtered = useMemo(() => {
     let list = [...plots];
     if (statusFilter !== 'all') list = list.filter(p => p.status === statusFilter);
     if (search.trim()) {
@@ -169,7 +166,7 @@ export default function PlotInventory() {
         p.plot_number?.toLowerCase().includes(s)
       );
     }
-    setFiltered(list);
+    return list;
   }, [statusFilter, search, plots]);
 
   const available = plots.filter(p => p.status === 'available').length;

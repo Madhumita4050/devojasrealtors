@@ -1,14 +1,13 @@
-import React, { useState, useMemo } from 'react';
-import { CheckCircle2, ShieldCheck, Filter, Grid, List, Sparkles, Phone, Compass, ArrowUpRight, Lock, Eye } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Filter, Grid, List, Sparkles, Phone, Lock } from 'lucide-react';
 
 export default function PlotInventory({ project, onSelectPlotForEnquiry }) {
   const [filterStatus, setFilterStatus] = useState('All'); // 'All' | 'Available' | 'Sold' | 'Booked'
   const [filterBlock, setFilterBlock] = useState('All');
   const [onlyCorners, setOnlyCorners] = useState(false);
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'table'
-  const [selectedPlot, setSelectedPlot] = useState(null);
 
-  const plots = project?.plots || [];
+  const plots = useMemo(() => project?.plots || [], [project?.plots]);
   
   // Calculate dynamic stats
   const stats = useMemo(() => {
@@ -210,7 +209,6 @@ export default function PlotInventory({ project, onSelectPlotForEnquiry }) {
             {filteredPlots.map((plot) => {
               const isAvailable = plot.status === 'Available';
               const isSold = plot.status === 'Sold';
-              const isBooked = plot.status === 'Booked';
 
               return (
                 <div

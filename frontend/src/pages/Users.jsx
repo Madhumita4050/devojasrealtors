@@ -22,6 +22,8 @@ const Users = () => {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [error, setError] = useState('');
   const [createdCreds, setCreatedCreds] = useState(null);
+  const [fixedAssociates, setFixedAssociates] = useState([]);
+  const [resetCreds, setResetCreds] = useState(null);
 
   const currentRole = searchParams.get('role') || '';
   const currentKyc = searchParams.get('kyc_status') || '';
@@ -53,8 +55,24 @@ const Users = () => {
     } catch (err) { console.error(err); }
   };
 
+  const fetchFixedAssociates = async () => {
+    try {
+      const res = await api.get('/users/fixed-associates');
+      setFixedAssociates(res.data.data);
+    } catch (err) { console.error(err); }
+  };
+
   useEffect(() => { fetchUsers(); }, [currentRole, currentKyc, currentStatus, search]);
-  useEffect(() => { fetchAssociates(); }, []);
+  useEffect(() => { fetchAssociates(); fetchFixedAssociates(); }, []);
+
+  const handleResetFixedPassword = async (id) => {
+    if (!window.confirm("Are you sure you want to reset this fixed associate's password?")) return;
+    try {
+      const res = await api.post(`/users/${id}/reset-fixed-associate`);
+      setResetCreds({ password: res.data.newPassword, message: res.data.message });
+      alert(`Password reset successfully! New password: ${res.data.newPassword}`);
+    } catch (err) { alert(err.response?.data?.message || 'Error resetting password'); }
+  };
 
   const setTab = (tab) => {
     if (tab === 'all') setSearchParams({});
@@ -67,7 +85,8 @@ const Users = () => {
     setEditingUser(null);
     // Jis tab se "Add User" click hua ho (Client / Associate / Accounts),
     // us tab ka role form me already filled aa jaye.
-    const prefillRole = ['associate', 'client', 'accounts'].includes(currentRole) ? currentRole : 'associate';
+    // For Client / Accounts / Associate
+    const prefillRole = ['associate', 'client', 'accounts'].includes(currentRole) ? currentRole : 'client';
     setForm({
       ...emptyForm,
       role: prefillRole,
@@ -274,6 +293,43 @@ const Users = () => {
         />
       </div>
 
+      {/* Fixed Associates Section */}
+      {(activeTab === 'associate' || activeTab === 'all') && fixedAssociates.length > 0 && (
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm mb-6">
+          <div className="p-4 border-b border-slate-200 bg-slate-50 rounded-t-2xl">
+            <h2 className="text-lg font-bold text-slate-800">Fixed Associate Accounts</h2>
+            <p className="text-sm text-slate-500">Pre-defined associate accounts (devojas-0001 to devojas-0006)</p>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="text-xs text-slate-500 bg-slate-50/50 uppercase border-b border-slate-200">
+                <tr>
+                  <th className="px-4 py-3 font-semibold">Associate Info</th>
+                  <th className="px-4 py-3 font-semibold text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {fixedAssociates.map(user => (
+                  <tr key={user.id} className="hover:bg-slate-50/80 transition-colors">
+                    <td className="px-4 py-3">
+                      <div className="font-bold text-slate-900">{user.name}</div>
+                      <div className="text-xs text-blue-600 font-mono mt-0.5">{user.login_id}</div>
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <button 
+                        onClick={() => handleResetFixedPassword(user.id)}
+                        className="text-xs bg-amber-100 hover:bg-amber-200 text-amber-800 px-3 py-1.5 rounded-lg font-semibold transition-colors"
+                      >
+                        Reset Password
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
       <div className="card overflow-x-auto p-0 border border-slate-200">
         <table className="data-table">
           <thead>
@@ -459,10 +515,8 @@ const Users = () => {
                 }}
                 className="input-field"
               >
-                <option value="associate">Associate</option>
                 <option value="client">Client</option>
                 <option value="accounts">Accounts</option>
-                <option value="admin">Admin</option>
               </select>
             </div>
           )}

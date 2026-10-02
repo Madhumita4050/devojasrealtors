@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Leaf, MapPin, ShieldCheck, TrendingUp } from 'lucide-react';
+import { ArrowRight, Leaf, MapPin, TrendingUp } from 'lucide-react';
 
 const trustPoints = [
   {

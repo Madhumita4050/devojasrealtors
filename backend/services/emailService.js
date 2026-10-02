@@ -132,7 +132,7 @@ const sendCredentialsEmail = async (user, loginId, plainPassword) => {
     `Your ${roleLabel} account has been created at DEVOJAS REALTORS.\n\n` +
     `Login ID : ${loginId}\n` +
     `Password : ${plainPassword}\n\n` +
-    `Please login at the portal and change your password after first login.\n\n` +
+    `Please login at our portal (http://localhost:5173/login or your production URL) and change your password after first login.\n\n` +
     `Regards,\nDEVOJAS REALTORS`;
 
   const html = `
@@ -159,6 +159,9 @@ const sendCredentialsEmail = async (user, loginId, plainPassword) => {
             <td style="padding:12px 16px;font-weight:700;font-size:15px;color:#1E3A8A">${user.referral_code}</td>
           </tr>` : ''}
         </table>
+        <div style="text-align:center;margin-bottom:20px;">
+          <a href="http://localhost:5173/login" style="display:inline-block;padding:12px 24px;background-color:#1E3A8A;color:#fff;text-decoration:none;border-radius:6px;font-weight:bold;font-size:14px;letter-spacing:0.5px;">Log In Now</a>
+        </div>
         <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:12px 16px;font-size:13px;color:#92400e;margin-bottom:20px">
           ⚠️ Please change your password after your first login for security.
         </div>
