@@ -20,6 +20,7 @@ import SlabSettings from './pages/SlabSettings';
 import MyTeamNetworkAdmin from './pages/MyTeamNetwork';
 import PaymentsAndReceipts from './pages/PaymentsAndReceipts';
 import AdminBookingForms from './pages/accounts/BookingForms';
+import EmiStatements from './pages/EmiStatements';
 
 // ---------- NEW: Client Panel imports ----------
 import ClientLayout from './components/client/ClientLayout';
@@ -92,6 +93,7 @@ function App() {
             <Route path="/payments" element={<PaymentsAndReceipts />} />
             <Route path="/booking-forms" element={<AdminBookingForms />} />
             <Route path="/daily-records" element={<DailyRecords />} />
+            <Route path="/emi-statements" element={<EmiStatements />} />
           </Route>
 
           {/* ---------- CLIENT PANEL (new) ---------- */}
@@ -154,6 +156,7 @@ function App() {
             <Route path="/accounts/support" element={<AccountsSupport />} />
             <Route path="/accounts/booking-forms" element={<AccountsBookingForms />} />
             <Route path="/accounts/daily-records" element={<DailyRecords />} />
+            <Route path="/accounts/emi-statements" element={<EmiStatements />} />
           </Route>
         </Routes>
       </AuthProvider>

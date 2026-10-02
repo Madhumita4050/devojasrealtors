@@ -52,7 +52,8 @@ const Sidebar = ({ collapsed }) => {
       title: "Accounts", icon: Receipt, path: "/accounts-menu",
       sub: [
         { title: "Daily Records", path: "/daily-records" },
-        { title: "Payments & Receipts", path: "/payments" }
+        { title: "Payments & Receipts", path: "/payments" },
+        { title: "EMI Statements", path: "/emi-statements" }
       ]
     },
     { title: "Booking Forms", icon: FileText, path: "/booking-forms" },

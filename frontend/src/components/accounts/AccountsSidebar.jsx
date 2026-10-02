@@ -12,6 +12,7 @@ const menuItems = [
   { title: 'Payout Management', icon: Send, path: '/accounts/payouts' },
   { title: 'Invoices & Receipts', icon: FileText, path: '/accounts/invoices' },
   { title: 'Financial Reports', icon: BarChart3, path: '/accounts/reports' },
+  { title: 'EMI Statements', icon: FileText, path: '/accounts/emi-statements' },
   { title: 'All Wallets', icon: Wallet, path: '/accounts/wallets' },
   { title: 'Export Data', icon: Download, path: '/accounts/export' },
   { title: 'Support', icon: Headphones, path: '/accounts/support' },

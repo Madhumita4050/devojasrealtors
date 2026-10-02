@@ -8,6 +8,26 @@ const { EmiPlan, EmiInstallment, Transaction, User } = require('../models');
 
 // @desc  Create EMI plan for a transaction + auto-generate installment rows
 // @route POST /api/transactions/:id/emi
+const getAllEmiPlans = async (req, res, next) => {
+  try {
+    const plans = await EmiPlan.findAll({
+      include: [
+        { model: EmiInstallment, as: 'installments' },
+        { 
+          model: Transaction, as: 'transaction',
+          include: [
+            { model: User, as: 'buyer' },
+            { model: User, as: 'sellerAssociate' },
+            { model: require('../models/Plot'), as: 'plot' }
+          ]
+        }
+      ],
+      order: [['createdAt', 'DESC']]
+    });
+    res.json({ success: true, data: plans });
+  } catch (error) { next(error); }
+};
+
 const createEmiPlan = async (req, res, next) => {
   try {
     const { down_payment, num_months, start_date } = req.body;
@@ -99,4 +119,4 @@ const markInstallmentPaid = async (req, res, next) => {
   } catch (error) { next(error); }
 };
 
-module.exports = { createEmiPlan, getEmiPlan, markInstallmentPaid };
+module.exports = { createEmiPlan, getEmiPlan, markInstallmentPaid, getAllEmiPlans };
