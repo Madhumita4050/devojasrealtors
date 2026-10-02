@@ -1,21 +1,12 @@
 {
-  // ─── CSS / Tailwind ──────────────────────────────────────────────────────────
-  // Tailwind ke @tailwind, @apply, @layer directives ko VS Code unknown rule
-  // errors na de isliye CSS validation off kiya gaya hai.
-  // Actual CSS errors Vite build time pe pakde jaate hain.
   "css.validate": false,
   "scss.validate": false,
   "less.validate": false,
-
-  // Tailwind CSS IntelliSense extension ko yeh batata hai ki
-  // yeh project Tailwind use karta hai — autocomplete + hover docs milega
   "tailwindCSS.includeLanguages": {
     "javascript": "javascript",
     "javascriptreact": "javascriptreact"
   },
   "tailwindCSS.experimental.classRegex": [],
-
-  // ─── Editor ──────────────────────────────────────────────────────────────────
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[css]": {
@@ -27,14 +18,9 @@
   "[javascriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-
-  // ─── File Associations ────────────────────────────────────────────────────────
-  // index.css ko PostCSS file maano — isse @tailwind etc red nahi honge
   "files.associations": {
     "*.css": "tailwindcss"
   },
-
-  // ─── Emmet ───────────────────────────────────────────────────────────────────
   "emmet.includeLanguages": {
     "javascript": "javascriptreact"
   }
