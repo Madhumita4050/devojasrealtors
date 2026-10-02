@@ -155,7 +155,7 @@ const updateUser = async (req, res, next) => {
       }
     }
 
-    const { password, ...userData } = user.toJSON();
+    const { password: _, ...userData } = user.toJSON();
     res.json({ success: true, data: userData });
   } catch (error) {
     next(error);
