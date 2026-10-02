@@ -7,7 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 const emptyForm = {
   name: '', phone: '', email: '',
   pan_number: '', aadhar_number: '',
-  password: '', referral_commission_percent: ''
+  password: ''
 };
 
 const AssociateMyTeamNetwork = () => {
@@ -199,15 +199,12 @@ const AssociateMyTeamNetwork = () => {
                   placeholder="Set a login password for them" className="input-field" />
               </div>
 
-              <div>
-                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                  Commission % They Give You (max {user?.referral_commission_percent || 100}%)
-                </label>
-                <input required type="number" step="0.1" min="0.1" max={user?.referral_commission_percent || 100}
-                  value={form.referral_commission_percent}
-                  onChange={(e) => setForm({ ...form, referral_commission_percent: e.target.value })}
-                  className="input-field" placeholder="e.g. 3" />
-                <p className="text-[10px] text-slate-500 mt-1">Cannot exceed your own commission % ({user?.referral_commission_percent || 100}%)</p>
+              {/* Commission info — read only, set by admin */}
+              <div className="bg-amber-950/30 border border-amber-700/40 rounded-lg px-4 py-3">
+                <p className="text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-1">Commission Rate</p>
+                <p className="text-xs text-slate-400">
+                  Commission % for this associate will be set by the <span className="text-amber-400 font-semibold">Admin</span> after approval. You cannot set or edit commission rates.
+                </p>
               </div>
             </div>
 

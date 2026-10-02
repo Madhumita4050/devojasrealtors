@@ -313,23 +313,13 @@ module.exports = {
 // @route POST /api/associate/team
 async function createTeamMember(req, res, next) {
   try {
-    const { name, phone, pan_number, aadhar_number, password, referral_commission_percent, email } = req.body;
+    // NOTE: Commission percent is intentionally NOT accepted from the associate.
+    // Only Admin can set / update commission % for any associate.
+    // New members get a default 5% which Admin can change from the admin panel.
+    const { name, phone, pan_number, aadhar_number, password, email } = req.body;
 
     if (!pan_number || !aadhar_number) {
       return res.status(400).json({ success: false, message: 'PAN and Aadhar number are mandatory' });
-    }
-
-    const requestedPercent = parseFloat(referral_commission_percent);
-    const myOwnPercent = req.user.referral_commission_percent ? parseFloat(req.user.referral_commission_percent) : 100;
-
-    if (!requestedPercent || requestedPercent <= 0) {
-      return res.status(400).json({ success: false, message: 'Please set a valid commission percentage for this team member' });
-    }
-    if (requestedPercent > myOwnPercent) {
-      return res.status(400).json({
-        success: false,
-        message: `You cannot give more than your own commission percentage (${myOwnPercent}%)`
-      });
     }
 
     const existingPhone = await User.findOne({ where: { phone } });
@@ -338,12 +328,16 @@ async function createTeamMember(req, res, next) {
     const hashedPassword = await bcrypt.hash(password || '123456', 10);
     const referral_code = generateReferralCode(name);
 
+    // Default commission = 5%; Admin updates this from the admin panel
+    const DEFAULT_COMMISSION = 5;
+
     const newMember = await User.create({
       name, phone, email: email || null,
       password: hashedPassword,
       role: 'associate',
       referred_by: req.user.id,
-      referral_commission_percent: requestedPercent,
+      referral_commission_percent: DEFAULT_COMMISSION,
+      commission_percent: DEFAULT_COMMISSION,
       pan_number, aadhar_number,
       referral_code
     });
@@ -353,7 +347,7 @@ async function createTeamMember(req, res, next) {
     await Notification.create({
       user_id: null,
       title: 'New Team Member Added',
-      message: `${req.user.name} added ${name} to their team at ${requestedPercent}%.`,
+      message: `${req.user.name} added ${name} to their team. Commission will be set by Admin.`,
       type: 'general'
     });
 

@@ -4,7 +4,7 @@ const {
   getDashboardStats, getMyTeam, getMyCommissions, getMyWallet, requestWithdrawal,
   browsePlots, updateProfile, changePassword, submitKyc,
   getMyNotifications, markNotificationRead, createComplaint, getMyComplaints,
-  createTeamMember, getMyNetwork, getMyPlots, getMyRewards, recordPaymentForDeal, setTeamMemberCommission
+  createTeamMember, getMyNetwork, getMyPlots, getMyRewards, recordPaymentForDeal
 } = require('../controllers/associateController');
 const { protect, authorize } = require('../middleware/auth');
 
@@ -14,7 +14,7 @@ router.use(protect, authorize('associate'));
 router.get('/dashboard-stats', getDashboardStats);
 router.get('/my-team', getMyTeam);
 router.post('/team', createTeamMember);
-router.put('/team/:id/commission', setTeamMemberCommission);
+// NOTE: commission update is ADMIN-only — associates cannot change commission %
 router.get('/network', getMyNetwork);
 router.get('/commissions', getMyCommissions);
 router.get('/my-plots', getMyPlots);
