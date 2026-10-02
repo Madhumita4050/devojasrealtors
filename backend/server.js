@@ -63,6 +63,18 @@ app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'API is running', timestamp: new Date() });
 });
 
+// TEMPORARY ROUTE TO FIX PRODUCTION DATABASE
+// Visit this URL once to update the tables (adds missing is_fixed_associate column)
+app.get('/api/sync-database-now', async (req, res) => {
+  try {
+    const { sequelize } = require('./config/db');
+    await sequelize.sync({ alter: true });
+    res.json({ success: true, message: 'Database synced successfully! Column added.' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message, stack: error.stack });
+  }
+});
+
 // Routes
 app.use('/api', emiRoutes); // NEW: EMI plan & installments — MUST be mounted before transactionRoutes to avoid its admin-only middleware intercepting /transactions/:id/emi
 app.use('/api/auth', authRoutes);
