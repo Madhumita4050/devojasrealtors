@@ -5,7 +5,8 @@ import { useAuth } from '../context/AuthContext';
 
 const emptyForm = {
   project_name: '', plot_size: '', sector_no: '', plot_no: '',
-  rate_per_sqft: '', basic_plot_price: '', corner_percent: '', park_facing_percent: '',
+  rate_per_sqft: '1500', basic_plot_price: '', corner_percent: '', park_facing_percent: '',
+  plot_length: '', plot_width: '', check_no: '', upi_id: '', bank_name: '', month: '', referred_id: '',
   payment_plan_type: 'full', total_plot_price: '', payment_mode: '',
   emi_duration_months: '', down_payment_amt: '',
   applicant_name: '', applicant_phone: '', applicant_date: '', applicant_place: ''
@@ -120,6 +121,10 @@ const printPDF = (form) => {
 
     <div class="multi-col">
       <div class="col-group">
+        <span class="label">Plot Dimensions</span>
+        <span class="value">${form.plot_length || ''} x ${form.plot_width || ''}</span>
+      </div>
+      <div class="col-group">
         <span class="label">Plot Size</span>
         <span class="value">${form.plot_size || ''}</span>
         <span class="unit">Sq.ft.</span>
@@ -159,6 +164,33 @@ const printPDF = (form) => {
     </div>
   </div>
 
+  <div class="form-section">
+    <div class="section-title">OTHER DETAILS</div>
+    <div class="multi-col">
+      <div class="col-group">
+        <span class="label">Bank Name</span>
+        <span class="value">${form.bank_name || '—'}</span>
+      </div>
+      <div class="col-group">
+        <span class="label">Check No</span>
+        <span class="value">${form.check_no || '—'}</span>
+      </div>
+    </div>
+    <div class="multi-col">
+      <div class="col-group">
+        <span class="label">UPI ID</span>
+        <span class="value">${form.upi_id || '—'}</span>
+      </div>
+      <div class="col-group">
+        <span class="label">Month</span>
+        <span class="value">${form.month || '—'}</span>
+      </div>
+      <div class="col-group">
+        <span class="label">Referred ID</span>
+        <span class="value">${form.referred_id || '—'}</span>
+      </div>
+    </div>
+  </div>
   <!-- SECTION 2: PAYMENT PLAN OPTION -->
   <div class="form-section">
     <div class="section-title">PAYMENT PLAN OPTION</div>
@@ -269,6 +301,20 @@ const BookingForms = ({ isAdmin = false }) => {
   const [submitting, setSubmitting] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
+  useEffect(() => {
+    if (form.plot_length && form.plot_width) {
+      const size = Number(form.plot_length) * Number(form.plot_width);
+      const rate = Number(form.rate_per_sqft) || 1500;
+      const basic = size * rate;
+      const corner = Number(form.corner_percent) || 0;
+      const total = basic + (basic * corner / 100);
+      
+      if (form.plot_size !== size || form.basic_plot_price !== basic || form.total_plot_price !== total) {
+        setForm(prev => ({ ...prev, plot_size: size, basic_plot_price: basic, total_plot_price: total }));
+      }
+    }
+  }, [form.plot_length, form.plot_width, form.rate_per_sqft, form.corner_percent]);
+
   const fetchForms = async () => {
     setLoading(true);
     try {
@@ -298,6 +344,13 @@ const BookingForms = ({ isAdmin = false }) => {
       basic_plot_price: f.basic_plot_price || '',
       corner_percent: f.corner_percent || '',
       park_facing_percent: f.park_facing_percent || '',
+      plot_length: f.plot_length || '',
+      plot_width: f.plot_width || '',
+      check_no: f.check_no || '',
+      upi_id: f.upi_id || '',
+      bank_name: f.bank_name || '',
+      month: f.month || '',
+      referred_id: f.referred_id || '',
       payment_plan_type: f.payment_plan_type || 'full',
       total_plot_price: f.total_plot_price || '',
       payment_mode: f.payment_mode || '',
@@ -497,10 +550,18 @@ const BookingForms = ({ isAdmin = false }) => {
                       <label className="block text-xs font-bold text-slate-600 mb-1">Project Name *</label>
                       <input required value={form.project_name} onChange={e => setForm({...form, project_name: e.target.value})} className="input-field" placeholder="e.g. Devojas Green Valley Phase 2" />
                     </div>
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-5 gap-3">
                       <div>
-                        <label className="block text-xs font-bold text-slate-600 mb-1">Plot Size (Sq.ft.) *</label>
-                        <input required value={form.plot_size} onChange={e => setForm({...form, plot_size: e.target.value})} className="input-field" placeholder="e.g. 1200" />
+                        <label className="block text-xs font-bold text-slate-600 mb-1">Plot Length *</label>
+                        <input required type="number" value={form.plot_length} onChange={e => setForm({...form, plot_length: e.target.value})} className="input-field" placeholder="e.g. 40" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-600 mb-1">Plot Width *</label>
+                        <input required type="number" value={form.plot_width} onChange={e => setForm({...form, plot_width: e.target.value})} className="input-field" placeholder="e.g. 40" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-600 mb-1">Plot Size (Sq.ft.)</label>
+                        <input readOnly value={form.plot_size} className="input-field bg-slate-100" placeholder="Auto calculated" />
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-600 mb-1">Sector No. *</label>
@@ -574,6 +635,37 @@ const BookingForms = ({ isAdmin = false }) => {
                         </div>
                       </div>
                     )}
+                  </div>
+                </div>
+
+                {/* OTHER DETAILS */}
+                <div>
+                  <div className="bg-orange-500 text-white text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-t-lg">Other Details</div>
+                  <div className="border border-orange-200 rounded-b-lg p-4 space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-600 mb-1">Bank Name</label>
+                        <input value={form.bank_name} onChange={e => setForm({...form, bank_name: e.target.value})} className="input-field" placeholder="Bank Name" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-600 mb-1">Check No</label>
+                        <input value={form.check_no} onChange={e => setForm({...form, check_no: e.target.value})} className="input-field" placeholder="Check No" />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-600 mb-1">UPI ID</label>
+                        <input value={form.upi_id} onChange={e => setForm({...form, upi_id: e.target.value})} className="input-field" placeholder="UPI ID" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-600 mb-1">Month</label>
+                        <input value={form.month} onChange={e => setForm({...form, month: e.target.value})} className="input-field" placeholder="Month" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-600 mb-1">Referred ID</label>
+                        <input value={form.referred_id} onChange={e => setForm({...form, referred_id: e.target.value})} className="input-field" placeholder="Referred ID" />
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -665,6 +757,12 @@ const BookingForms = ({ isAdmin = false }) => {
                   ['Plan Type', viewForm.payment_plan_type === 'emi' ? 'Down Payment + EMI' : '100% Full Payment'],
                   ['Total Plot Price', viewForm.total_plot_price ? `₹${Number(viewForm.total_plot_price).toLocaleString('en-IN')}` : '—'],
                   ['Payment Mode', viewForm.payment_mode],
+                  ['Bank Name', viewForm.bank_name],
+                  ['Check No', viewForm.check_no],
+                  ['UPI ID', viewForm.upi_id],
+                  ['Month', viewForm.month],
+                  ['Referred ID', viewForm.referred_id],
+                  ['Plot Dimensions', `${viewForm.plot_length || '—'} x ${viewForm.plot_width || '—'}`],
                   ['EMI Duration', viewForm.emi_duration_months ? `${viewForm.emi_duration_months} Months` : '—'],
                   ['Down Payment', viewForm.down_payment_amt ? `₹${Number(viewForm.down_payment_amt).toLocaleString('en-IN')}` : '—'],
                 ]},

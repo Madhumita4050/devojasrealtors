@@ -14,6 +14,13 @@ const BookingForm = sequelize.define('BookingForm', {
   basic_plot_price: { type: DataTypes.DECIMAL(10, 2) },
   corner_percent: { type: DataTypes.DECIMAL(5, 2) },
   park_facing_percent: { type: DataTypes.DECIMAL(5, 2) },
+  plot_length: { type: DataTypes.DECIMAL(10, 2) },
+  plot_width: { type: DataTypes.DECIMAL(10, 2) },
+  check_no: { type: DataTypes.STRING },
+  upi_id: { type: DataTypes.STRING },
+  bank_name: { type: DataTypes.STRING },
+  month: { type: DataTypes.STRING },
+  referred_id: { type: DataTypes.STRING },
 
   // Payment Plan Option
   payment_plan_type: { type: DataTypes.ENUM('full', 'emi'), defaultValue: 'full' },
