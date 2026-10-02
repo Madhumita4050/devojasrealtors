@@ -75,6 +75,61 @@ app.get('/api/sync-database-now', async (req, res) => {
   }
 });
 
+// TEMPORARY ROUTE TO GENERATE 6 FIXED ASSOCIATES (devojas-0001 to 0006) WITH COMMISSIONS 30% to 25%
+app.get('/api/seed-fixed-associates', async (req, res) => {
+  try {
+    const { User, Wallet } = require('./models');
+    const bcrypt = require('bcryptjs');
+    
+    const fixedCommissions = [30, 29, 28, 27, 26, 25]; // 0001 to 0006
+    const results = [];
+    
+    for (let i = 1; i <= 6; i++) {
+      const login_id = `devojas-000${i}`;
+      const commissionPercent = fixedCommissions[i - 1];
+      const pw = await bcrypt.hash('password', 10);
+      
+      let existing = await User.findOne({ where: { login_id, is_fixed_associate: true } });
+      
+      if (!existing) {
+        const refCode = `FIXED${i}${Math.floor(100 + Math.random() * 900)}`;
+        const phone = `999900100${i}`; 
+        const email = `associate${i}@devojas.com`;
+        
+        const user = await User.create({
+          name: `Fixed Associate ${i}`,
+          email,
+          phone,
+          password: pw,
+          plain_password: 'password',
+          role: 'associate',
+          status: 'active',
+          kyc_status: 'approved',
+          referral_code: refCode,
+          is_fixed_associate: true,
+          referral_commission_percent: commissionPercent,
+          commission_percent: commissionPercent
+        });
+        
+        await user.update({ login_id });
+        await Wallet.create({ user_id: user.id, balance: 0 });
+        results.push(`Created ${login_id} with ${commissionPercent}%`);
+      } else {
+        await existing.update({
+          referral_commission_percent: commissionPercent,
+          commission_percent: commissionPercent,
+          plain_password: 'password',
+          password: pw
+        });
+        results.push(`Updated ${login_id} to ${commissionPercent}%`);
+      }
+    }
+    res.json({ success: true, message: 'Fixed associates processed.', details: results });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // Routes
 app.use('/api', emiRoutes); // NEW: EMI plan & installments — MUST be mounted before transactionRoutes to avoid its admin-only middleware intercepting /transactions/:id/emi
 app.use('/api/auth', authRoutes);

@@ -162,12 +162,14 @@ const seed = async () => {
     }
 
     // ─── 2.5 FIXED ASSOCIATES ────────────────────────────────────────────────
+    const fixedCommissions = [30, 29, 28, 27, 26, 25]; // 0001 to 0006
     for (let i = 1; i <= 6; i++) {
       const login_id = `devojas-000${i}`;
-      const existing = await User.findOne({ where: { login_id, is_fixed_associate: true } });
+      let existing = await User.findOne({ where: { login_id, is_fixed_associate: true } });
+      const commissionPercent = fixedCommissions[i - 1];
+      const pw = await bcrypt.hash('password', 10);
       
       if (!existing) {
-        const pw = await bcrypt.hash('password', 10);
         const refCode = `FIXED${i}${Math.floor(100 + Math.random() * 900)}`;
         
         // Ensure no duplicate phone by using a fake, unique phone pattern for these
@@ -179,18 +181,27 @@ const seed = async () => {
           email,
           phone,
           password: pw,
+          plain_password: 'password',
           role: 'associate',
           status: 'active',
           kyc_status: 'approved',
           referral_code: refCode,
-          is_fixed_associate: true
+          is_fixed_associate: true,
+          referral_commission_percent: commissionPercent,
+          commission_percent: commissionPercent
         });
         
         await user.update({ login_id });
         await Wallet.create({ user_id: user.id, balance: 0 });
-        console.log(`✅ Fixed Associate created → ${login_id} | Pass: password`);
+        console.log(`✅ Fixed Associate created → ${login_id} | Pass: password | Commission: ${commissionPercent}%`);
       } else {
-        console.log(`ℹ️  Fixed Associate ${login_id} already exists`);
+        await existing.update({
+          referral_commission_percent: commissionPercent,
+          commission_percent: commissionPercent,
+          plain_password: 'password',
+          password: pw
+        });
+        console.log(`ℹ️  Fixed Associate ${login_id} updated with ${commissionPercent}% commission & pass reset to 'password'`);
       }
     }
 
