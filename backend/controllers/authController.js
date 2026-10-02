@@ -154,8 +154,8 @@ const registerAssociate = async (req, res, next) => {
       pan_number,
       aadhar_number,
       referral_code,
-      kyc_status: 'pending',
-      status: 'pending_approval'
+      kyc_status: 'approved',
+      status: 'active'
     });
 
     // Auto-generate login_id after creation (DEV-XXXX)

@@ -152,6 +152,9 @@ const EmiStatements = () => {
   const [loading, setLoading] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [search, setSearch] = useState("");
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [addForm, setAddForm] = useState({ transaction_id: "", down_payment: 0, num_months: 12, start_date: new Date().toISOString().split('T')[0] });
+  const [adding, setAdding] = useState(false);
   const printRef = useRef(null);
 
   const handlePrint = useReactToPrint({ contentRef: printRef, documentTitle: selectedPlan ? `EMI_Statement_${selectedPlan.id}` : "EMI_Statement" });
@@ -167,6 +170,29 @@ const EmiStatements = () => {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAddSubmit = async (e) => {
+    e.preventDefault();
+    if (!addForm.transaction_id || !addForm.num_months || !addForm.start_date) {
+      alert('Please fill all required fields');
+      return;
+    }
+    setAdding(true);
+    try {
+      await api.post(`/transactions/${addForm.transaction_id}/emi`, {
+        down_payment: addForm.down_payment,
+        num_months: addForm.num_months,
+        start_date: addForm.start_date
+      });
+      setShowAddModal(false);
+      setAddForm({ transaction_id: "", down_payment: 0, num_months: 12, start_date: new Date().toISOString().split('T')[0] });
+      fetchPlans();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Error creating EMI plan');
+    } finally {
+      setAdding(false);
     }
   };
 
@@ -196,14 +222,22 @@ const EmiStatements = () => {
             View, manage and print complete EMI schedules for all associates
           </p>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(212,175,55,0.2)", borderRadius: "10px", padding: "8px 14px" }}>
-          <Search size={16} color="#D4AF37" />
-          <input
-            placeholder="Search by name or ID…"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            style={{ background: "transparent", border: "none", outline: "none", color: "white", fontSize: "14px", width: "220px" }}
-          />
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(212,175,55,0.2)", borderRadius: "10px", padding: "8px 14px" }}>
+            <Search size={16} color="#D4AF37" />
+            <input
+              placeholder="Search by name or ID…"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={{ background: "transparent", border: "none", outline: "none", color: "white", fontSize: "14px", width: "220px" }}
+            />
+          </div>
+          <button 
+            onClick={() => setShowAddModal(true)}
+            style={{ background: "#D4AF37", color: "#0b1437", border: "none", padding: "10px 16px", borderRadius: "10px", fontWeight: 700, fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}
+          >
+            <FileText size={16} /> Create EMI Plan
+          </button>
         </div>
       </div>
 
@@ -327,6 +361,63 @@ const EmiStatements = () => {
             <div style={{ flex: 1, overflowY: "auto", background: "#f8fafc" }}>
               <PrintStatement ref={printRef} plan={selectedPlan} />
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add EMI Plan Modal */}
+      {showAddModal && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+          <div onClick={() => setShowAddModal(false)} style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }} />
+          <div style={{ position: "relative", background: "#1e293b", borderRadius: "20px", border: "1px solid rgba(255,255,255,0.1)", width: "100%", maxWidth: "400px", padding: "24px", zIndex: 110 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+              <h3 style={{ margin: 0, color: "white", fontSize: "18px", fontWeight: 700 }}>Create New EMI Plan</h3>
+              <button onClick={() => setShowAddModal(false)} style={{ background: "transparent", border: "none", color: "#94a3b8", cursor: "pointer" }}><X size={20} /></button>
+            </div>
+            
+            <form onSubmit={handleAddSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div>
+                <label style={{ display: "block", color: "#94a3b8", fontSize: "12px", fontWeight: 600, marginBottom: "6px" }}>Transaction ID *</label>
+                <input 
+                  type="number" required
+                  value={addForm.transaction_id}
+                  onChange={(e) => setAddForm({...addForm, transaction_id: e.target.value})}
+                  style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "white", boxSizing: "border-box" }} 
+                />
+              </div>
+              <div>
+                <label style={{ display: "block", color: "#94a3b8", fontSize: "12px", fontWeight: 600, marginBottom: "6px" }}>Down Payment (₹)</label>
+                <input 
+                  type="number"
+                  value={addForm.down_payment}
+                  onChange={(e) => setAddForm({...addForm, down_payment: e.target.value})}
+                  style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "white", boxSizing: "border-box" }} 
+                />
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                <div>
+                  <label style={{ display: "block", color: "#94a3b8", fontSize: "12px", fontWeight: 600, marginBottom: "6px" }}>No. of Months *</label>
+                  <input 
+                    type="number" required min="1"
+                    value={addForm.num_months}
+                    onChange={(e) => setAddForm({...addForm, num_months: e.target.value})}
+                    style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "white", boxSizing: "border-box" }} 
+                  />
+                </div>
+                <div>
+                  <label style={{ display: "block", color: "#94a3b8", fontSize: "12px", fontWeight: 600, marginBottom: "6px" }}>Start Date *</label>
+                  <input 
+                    type="date" required
+                    value={addForm.start_date}
+                    onChange={(e) => setAddForm({...addForm, start_date: e.target.value})}
+                    style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "white", boxSizing: "border-box" }} 
+                  />
+                </div>
+              </div>
+              <button disabled={adding} type="submit" style={{ marginTop: "8px", width: "100%", padding: "12px", borderRadius: "8px", background: "#D4AF37", color: "#0b1437", fontWeight: 700, fontSize: "14px", border: "none", cursor: adding ? "not-allowed" : "pointer", opacity: adding ? 0.7 : 1 }}>
+                {adding ? "Creating..." : "Generate EMI Schedule"}
+              </button>
+            </form>
           </div>
         </div>
       )}

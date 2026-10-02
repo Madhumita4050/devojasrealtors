@@ -87,27 +87,18 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
       return;
     }
 
-    if (signupRole === 'associate') {
-      if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/i.test(signupForm.pan_number)) {
-        setError('Please enter a valid PAN number (e.g. ABCDE1234F).');
-        return;
-      }
-      if (!/^\d{12}$/.test(signupForm.aadhar_number)) {
-        setError('Please enter a valid 12-digit Aadhar number.');
-        return;
-      }
+    if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/i.test(signupForm.pan_number)) {
+      setError('Please enter a valid PAN number (e.g. ABCDE1234F).');
+      return;
+    }
+    if (!/^\d{12}$/.test(signupForm.aadhar_number)) {
+      setError('Please enter a valid 12-digit Aadhar number.');
+      return;
     }
 
     setLoading(true);
     try {
-      let result;
-      if (signupRole === 'associate') {
-        result = await authService.signupAssociate(signupForm);
-      } else if (signupRole === 'accounts') {
-        result = await authService.signupAccounts(signupForm);
-      } else {
-        result = await authService.signupClient(signupForm);
-      }
+      const result = await authService.signupAssociate(signupForm);
       if (result.success) {
         setSuccessData(result.data);
         setMode('success');
@@ -259,40 +250,9 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
                   <ArrowLeft className="h-4 w-4" />
                 </button>
                 <div>
-                  <h3 className="text-xl font-bold text-brand-navy font-serif">Create an Account</h3>
-                  <p className="text-xs text-gray-500">Admin will review and approve your account.</p>
+                  <h3 className="text-xl font-bold text-brand-navy font-serif">Associate Sign Up</h3>
+                  <p className="text-xs text-gray-500">Create your associate account and start earning.</p>
                 </div>
-              </div>
-
-              {/* Role Selector */}
-              <div className="flex gap-2 mb-5 p-1 bg-gray-100 rounded-xl">
-                <button
-                  type="button"
-                  onClick={() => { setSignupRole('associate'); setError(''); }}
-                  className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
-                    signupRole === 'associate' ? 'bg-brand-navy text-white shadow' : 'text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  🤝 Associate
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setSignupRole('client'); setError(''); }}
-                  className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
-                    signupRole === 'client' ? 'bg-brand-navy text-white shadow' : 'text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  👤 Client
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setSignupRole('accounts'); setError(''); }}
-                  className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
-                    signupRole === 'accounts' ? 'bg-brand-navy text-white shadow' : 'text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  💼 Accounts
-                </button>
               </div>
 
               {error && <div className="bg-rose-50 text-rose-600 text-xs px-3 py-2 rounded-lg mb-4 flex items-start gap-2"><AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />{error}</div>}
