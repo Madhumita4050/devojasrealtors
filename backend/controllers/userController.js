@@ -132,7 +132,7 @@ const updateUser = async (req, res, next) => {
     const user = await User.findByPk(req.params.id);
     if (!user) return res.status(404).json({ success: false, message: 'User not found' });
 
-    const { name, email, phone, role, status, referred_by, pan_number, aadhar_number, referral_commission_percent } = req.body;
+    const { name, email, phone, role, status, referred_by, pan_number, aadhar_number, referral_commission_percent, password } = req.body;
     await user.update({
       name: name ?? user.name,
       email: email !== undefined ? (email || null) : user.email,
@@ -145,6 +145,15 @@ const updateUser = async (req, res, next) => {
       referral_commission_percent: referral_commission_percent !== undefined ? referral_commission_percent : user.referral_commission_percent,
       commission_percent: referral_commission_percent !== undefined ? referral_commission_percent : user.commission_percent
     });
+
+    if (password && password.trim() !== '') {
+      user.password = await bcrypt.hash(password, 10);
+      await user.save();
+      // Send email on password update if they have an email
+      if (user.email) {
+        await sendCredentialsEmail(user, user.login_id || user.phone, password);
+      }
+    }
 
     const { password, ...userData } = user.toJSON();
     res.json({ success: true, data: userData });

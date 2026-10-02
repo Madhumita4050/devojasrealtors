@@ -488,10 +488,10 @@ const Users = () => {
             <label className="text-sm font-semibold text-slate-700 mb-1.5 block">Phone Number *</label>
             <input required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="input-field" placeholder="10-digit mobile number" />
           </div>
-          {!editingUser && form.role !== 'associate' && (
+          {((!editingUser && form.role !== 'associate') || editingUser) && (
             <div>
-              <label className="text-sm font-semibold text-slate-700 mb-1.5 block">Account Password *</label>
-              <input required type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="input-field" placeholder="Minimum 6 characters" />
+              <label className="text-sm font-semibold text-slate-700 mb-1.5 block">Account Password {editingUser ? '(leave blank to keep current)' : '*'}</label>
+              <input required={!editingUser} type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="input-field" placeholder={editingUser ? "Leave blank to keep current password" : "Minimum 6 characters"} />
             </div>
           )}
           {!editingUser && form.role === 'associate' && (

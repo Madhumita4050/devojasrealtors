@@ -56,6 +56,11 @@ const register = async (req, res, next) => {
     // Auto create wallet for the user
     await Wallet.create({ user_id: user.id, balance: 0 });
 
+    // Send email immediately if password and email are provided
+    if (user.email && password) {
+      await sendCredentialsEmail(user, login_id, password);
+    }
+
     const token = role === 'accounts' ? null : generateToken(user.id);
 
     res.status(201).json({
