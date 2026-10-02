@@ -294,39 +294,101 @@ const Users = () => {
       </div>
 
       {/* Fixed Associates Section */}
-      {(activeTab === 'associate' || activeTab === 'all') && fixedAssociates.length > 0 && (
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm mb-6">
-          <div className="p-4 border-b border-slate-200 bg-slate-50 rounded-t-2xl">
-            <h2 className="text-lg font-bold text-slate-800">Fixed Associate Accounts</h2>
-            <p className="text-sm text-slate-500">Pre-defined associate accounts (devojas-0001 to devojas-0006)</p>
+      {(activeTab === 'associate' || activeTab === 'all') && (
+        <div className="bg-white border-2 border-amber-200 rounded-2xl shadow-md mb-6">
+          <div className="p-4 border-b border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-t-2xl flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-amber-900">🏅 Fixed Associate Accounts</h2>
+              <p className="text-sm text-amber-700">Pre-defined system accounts — devojas-0001 to devojas-0006</p>
+            </div>
+            <span className="text-xs bg-amber-200 text-amber-900 px-3 py-1 rounded-full font-bold">
+              {fixedAssociates.length} / 6 Active
+            </span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-              <thead className="text-xs text-slate-500 bg-slate-50/50 uppercase border-b border-slate-200">
+              <thead className="text-xs text-slate-500 bg-slate-50 uppercase border-b border-slate-200">
                 <tr>
-                  <th className="px-4 py-3 font-semibold">Associate Info</th>
+                  <th className="px-4 py-3 font-semibold">#</th>
+                  <th className="px-4 py-3 font-semibold">Name</th>
+                  <th className="px-4 py-3 font-semibold">Login ID</th>
+                  <th className="px-4 py-3 font-semibold">Email</th>
+                  <th className="px-4 py-3 font-semibold text-center">Commission</th>
+                  <th className="px-4 py-3 font-semibold text-center">Status</th>
+                  <th className="px-4 py-3 font-semibold">Password (Saved)</th>
                   <th className="px-4 py-3 font-semibold text-center">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {fixedAssociates.map(user => (
-                  <tr key={user.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="font-bold text-slate-900">{user.name}</div>
-                      <div className="text-xs text-blue-600 font-mono mt-0.5">{user.login_id}</div>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <button 
-                        onClick={() => handleResetFixedPassword(user.id)}
-                        className="text-xs bg-amber-100 hover:bg-amber-200 text-amber-800 px-3 py-1.5 rounded-lg font-semibold transition-colors"
-                      >
-                        Reset Password
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {/* Placeholder rows for all 6 IDs even if not yet created */}
+                {[1,2,3,4,5,6].map(i => {
+                  const lid = `devojas-000${i}`;
+                  const commissions = [30,29,28,27,26,25];
+                  const user = fixedAssociates.find(u => u.login_id === lid);
+                  return (
+                    <tr key={lid} className={`transition-colors ${user ? 'hover:bg-amber-50/40' : 'bg-slate-50/50 opacity-60'}`}>
+                      <td className="px-4 py-3">
+                        <span className="inline-flex w-7 h-7 rounded-full bg-amber-100 text-amber-900 font-bold text-xs items-center justify-center">{i}</span>
+                      </td>
+                      <td className="px-4 py-3">
+                        {user ? (
+                          <div>
+                            <div className="font-bold text-slate-900">{user.name}</div>
+                            <div className="text-[11px] text-slate-400 mt-0.5">{user.phone}</div>
+                          </div>
+                        ) : (
+                          <span className="text-slate-400 italic text-xs">Not created yet</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className="font-mono font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded border border-blue-200 text-xs">{lid}</span>
+                      </td>
+                      <td className="px-4 py-3 text-slate-600 text-xs">
+                        {user ? (user.email || <span className="italic text-slate-400">—</span>) : <span className="italic text-slate-400">—</span>}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <span className="inline-block bg-green-100 text-green-800 font-bold text-xs px-3 py-1 rounded-full border border-green-200">
+                          {commissions[i-1]}%
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        {user ? (
+                          <span className={`text-xs font-bold px-2 py-1 rounded-full ${
+                            user.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+                          }`}>{user.status}</span>
+                        ) : (
+                          <span className="text-xs text-slate-400 italic">Pending</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        {user?.plain_password ? (
+                          <span className="font-mono text-xs bg-red-50 text-red-700 border border-red-200 px-2 py-1 rounded font-semibold">{user.plain_password}</span>
+                        ) : (
+                          <span className="text-xs text-slate-400 italic">Not set</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        {user ? (
+                          <button 
+                            onClick={() => handleResetFixedPassword(user.id)}
+                            className="text-xs bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg font-semibold transition-colors shadow-sm"
+                          >
+                            🔑 Generate Password
+                          </button>
+                        ) : (
+                          <span className="text-xs text-slate-400">—</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
+          </div>
+          <div className="p-3 bg-amber-50 rounded-b-2xl border-t border-amber-100">
+            <p className="text-xs text-amber-700">
+              💡 <strong>Tip:</strong> Agar koi ID nahi dikh rahi, to browser mein <code className="bg-amber-100 px-1 rounded">https://api.devojasrealtors.in/api/seed-fixed-associates</code> kholen.
+            </p>
           </div>
         </div>
       )}
