@@ -24,6 +24,10 @@ const Users = () => {
   const [createdCreds, setCreatedCreds] = useState(null);
   const [fixedAssociates, setFixedAssociates] = useState([]);
   const [resetCreds, setResetCreds] = useState(null);
+  const [fixedEditModal, setFixedEditModal] = useState(null); // { loginId, userId, index }
+  const [fixedForm, setFixedForm] = useState({ name: '', email: '', phone: '', address: '' });
+  const [fixedSaving, setFixedSaving] = useState(false);
+  const [fixedGenPwd, setFixedGenPwd] = useState(null); // newly generated password to show
 
   const currentRole = searchParams.get('role') || '';
   const currentKyc = searchParams.get('kyc_status') || '';
@@ -66,12 +70,46 @@ const Users = () => {
   useEffect(() => { fetchAssociates(); fetchFixedAssociates(); }, []);
 
   const handleResetFixedPassword = async (id) => {
-    if (!window.confirm("Are you sure you want to reset this fixed associate's password?")) return;
     try {
       const res = await api.post(`/users/${id}/reset-fixed-associate`);
-      setResetCreds({ password: res.data.newPassword, message: res.data.message });
-      alert(`Password reset successfully! New password: ${res.data.newPassword}`);
-    } catch (err) { alert(err.response?.data?.message || 'Error resetting password'); }
+      setFixedGenPwd(res.data.newPassword);
+      fetchFixedAssociates();
+    } catch (err) { alert(err.response?.data?.message || 'Error generating password'); }
+  };
+
+  const openFixedEditModal = (i) => {
+    const lid = `devojas-000${i}`;
+    const user = fixedAssociates.find(u => u.login_id === lid);
+    setFixedGenPwd(null);
+    setFixedForm({
+      name: user?.name || '',
+      email: user?.email || '',
+      phone: user?.phone || '',
+      address: user?.address || ''
+    });
+    setFixedEditModal({ loginId: lid, userId: user?.id || null, index: i });
+  };
+
+  const handleFixedSave = async (e) => {
+    e.preventDefault();
+    if (!fixedEditModal) return;
+    setFixedSaving(true);
+    try {
+      if (fixedEditModal.userId) {
+        // Update existing
+        await api.put(`/users/${fixedEditModal.userId}`, { ...fixedForm, role: 'associate' });
+      } else {
+        // Create new fixed associate via seed route
+        await api.get('/seed-fixed-associates');
+      }
+      await fetchFixedAssociates();
+      const updatedUser = fixedAssociates.find(u => u.login_id === fixedEditModal.loginId);
+      setFixedEditModal(prev => ({ ...prev, userId: updatedUser?.id || prev.userId }));
+    } catch (err) {
+      alert(err.response?.data?.message || 'Error saving');
+    } finally {
+      setFixedSaving(false);
+    }
   };
 
   const setTab = (tab) => {
@@ -368,16 +406,12 @@ const Users = () => {
                         )}
                       </td>
                       <td className="px-4 py-3 text-center">
-                        {user ? (
-                          <button 
-                            onClick={() => handleResetFixedPassword(user.id)}
-                            className="text-xs bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg font-semibold transition-colors shadow-sm"
-                          >
-                            🔑 Generate Password
-                          </button>
-                        ) : (
-                          <span className="text-xs text-slate-400">—</span>
-                        )}
+                        <button 
+                          onClick={() => openFixedEditModal(i)}
+                          className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg font-semibold transition-colors shadow-sm"
+                        >
+                          ✏️ Edit / Setup
+                        </button>
                       </td>
                     </tr>
                   );
@@ -685,6 +719,82 @@ const Users = () => {
           </div>
         )}
       </Modal>
+      {/* Fixed Associate Edit / Setup Modal */}
+      {fixedEditModal && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+          <div onClick={() => { setFixedEditModal(null); setFixedGenPwd(null); }} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="relative bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md z-[210] overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-amber-500 to-yellow-400 p-4 flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-white">🏅 Fixed Associate Setup</h3>
+                <p className="text-amber-100 text-xs mt-0.5">Login ID: <span className="font-mono font-bold">{fixedEditModal.loginId}</span> &nbsp;|&nbsp; Commission: <span className="font-bold">{[30,29,28,27,26,25][fixedEditModal.index-1]}%</span></p>
+              </div>
+              <button onClick={() => { setFixedEditModal(null); setFixedGenPwd(null); }} className="text-white/80 hover:text-white text-xl font-bold">✕</button>
+            </div>
+
+            <div className="p-5 space-y-4">
+              {/* Show generated password prominently */}
+              {fixedGenPwd && (
+                <div className="bg-emerald-50 border-2 border-emerald-300 rounded-xl p-4 text-center">
+                  <p className="text-xs text-emerald-600 font-semibold uppercase tracking-wider mb-1">✅ New Password Generated!</p>
+                  <p className="text-2xl font-mono font-bold text-emerald-800">{fixedGenPwd}</p>
+                  <p className="text-xs text-emerald-600 mt-1">Share this with the associate</p>
+                </div>
+              )}
+
+              {/* Credentials Summary */}
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Login ID</span>
+                  <span className="font-mono font-bold text-blue-700">{fixedEditModal.loginId}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Saved Password</span>
+                  <span className="font-mono font-bold text-red-700">
+                    {fixedAssociates.find(u => u.login_id === fixedEditModal.loginId)?.plain_password || <span className="text-slate-400 italic text-xs">Not set — click Generate</span>}
+                  </span>
+                </div>
+              </div>
+
+              <form onSubmit={handleFixedSave} className="space-y-3">
+                <div>
+                  <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1">Full Name *</label>
+                  <input required value={fixedForm.name} onChange={e => setFixedForm({...fixedForm, name: e.target.value})} className="input-field" placeholder="e.g. Rajesh Kumar" />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1">Email</label>
+                  <input type="email" value={fixedForm.email} onChange={e => setFixedForm({...fixedForm, email: e.target.value})} className="input-field" placeholder="email@example.com" />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1">Phone *</label>
+                  <input required value={fixedForm.phone} onChange={e => setFixedForm({...fixedForm, phone: e.target.value})} className="input-field" placeholder="10-digit mobile" />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1">Address</label>
+                  <input value={fixedForm.address} onChange={e => setFixedForm({...fixedForm, address: e.target.value})} className="input-field" placeholder="Full address" />
+                </div>
+                <button disabled={fixedSaving} type="submit" className="btn-primary w-full py-3">
+                  {fixedSaving ? 'Saving...' : '💾 Save Details'}
+                </button>
+              </form>
+
+              {/* Generate Password Button */}
+              {fixedEditModal.userId && (
+                <button
+                  onClick={() => handleResetFixedPassword(fixedEditModal.userId)}
+                  className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm transition-colors"
+                >
+                  🔑 Generate New Password
+                </button>
+              )}
+              {!fixedEditModal.userId && (
+                <p className="text-xs text-slate-400 text-center">Save details first to enable password generation</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
