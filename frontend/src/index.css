@@ -26,12 +26,12 @@
     @apply bg-white border border-slate-200/90 rounded-2xl p-6 shadow-sm transition-all duration-200;
   }
   .card-hover {
-    @apply card hover:border-blue-300 hover:shadow-md hover:-translate-y-0.5;
+    @apply bg-white border border-slate-200/90 rounded-2xl p-6 shadow-sm transition-all duration-200 hover:border-blue-300 hover:shadow-md hover:-translate-y-0.5;
   }
 
   /* ─── STAT CARD ──────────────────────────────────────────────────────────── */
   .stat-card {
-    @apply card-hover relative overflow-hidden;
+    @apply bg-white border border-slate-200/90 rounded-2xl p-6 shadow-sm transition-all duration-200 hover:border-blue-300 hover:shadow-md hover:-translate-y-0.5 relative overflow-hidden;
   }
   .stat-card::before {
     content: '';
@@ -73,10 +73,10 @@
   .badge {
     @apply px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1;
   }
-  .badge-active { @apply badge bg-emerald-50 text-emerald-700 border border-emerald-200; }
-  .badge-pending { @apply badge bg-amber-50 text-amber-700 border border-amber-200; }
-  .badge-blocked { @apply badge bg-red-50 text-red-700 border border-red-200; }
-  .badge-approved { @apply badge bg-blue-50 text-blue-700 border border-blue-200; }
+  .badge-active { @apply px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200; }
+  .badge-pending { @apply px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200; }
+  .badge-blocked { @apply px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1 bg-red-50 text-red-700 border border-red-200; }
+  .badge-approved { @apply px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1 bg-blue-50 text-blue-700 border border-blue-200; }
 
   /* ─── TABLE ──────────────────────────────────────────────────────────────── */
   .data-table { @apply w-full text-base; }
@@ -104,7 +104,7 @@
     @apply w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 text-slate-300 hover:text-white hover:bg-white/10;
   }
   .sidebar-link-active {
-    @apply sidebar-link text-white bg-gradient-to-r from-blue-600 to-sky-500 font-semibold shadow-md shadow-blue-600/30;
+    @apply w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 text-white bg-gradient-to-r from-blue-600 to-sky-500 font-semibold shadow-md shadow-blue-600/30;
   }
 
   /* ─── NETWORK TREE ───────────────────────────────────────────────────────── */
